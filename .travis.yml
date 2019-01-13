@@ -64,4 +64,4 @@ script:
     && (echo 'Idempotence test: pass' && exit 0)
     || (echo 'Idempotence test: fail' && exit 1)
 
-  - bash -c 'command -v brew'
+  - bash -c 'command -v brew && brew --version'

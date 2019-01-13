@@ -25,4 +25,4 @@ ansible-playbook tests/test.yml -i tests/inventory --connection=local \
 
 echo "*** Verify installed Linuxbrew version"
 
-bash -c 'brew --version'
+bash -c 'command -v brew && brew --version'
