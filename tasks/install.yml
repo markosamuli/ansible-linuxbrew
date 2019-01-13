@@ -16,6 +16,8 @@
 
 - name: Install Linuxbrew
   command: sh -c "{{ linuxbrew_install_tmp }}/install.sh"
+  register: install_result
+  changed_when: "install_result.rc == 0"
   become: no
 
 - name: Remove temporary directory
