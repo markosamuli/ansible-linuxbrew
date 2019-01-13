@@ -1,0 +1,9 @@
+---
+# vars file for markosamuli.linuxbrew
+
+linuxbrew_shared_home: "/home/linuxbrew/.linuxbrew"
+linuxbrew_user_home: "~/.linuxbrew"
+
+linuxbrew_install_tmp: "/tmp/linuxbrew"
+linuxbrew_install_url: "https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh"
+linuxbrew_install_checksum: "sha256:d5c2a765b1a3419cfcca7c86ebab091881fd9353859f70b86c23f9d83f4b5dd3"

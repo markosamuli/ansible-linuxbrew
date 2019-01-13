@@ -1,0 +1,67 @@
+---
+
+language: generic
+python: "2.7"
+
+matrix:
+  include:
+    - os: linux
+      dist: trusty
+      sudo: required
+      env: ANSIBLE_VERSION=2.4.6.0
+    - os: linux
+      dist: xenial
+      sudo: required
+      env: ANSIBLE_VERSION=2.7.5.0
+
+# Install Ansible
+addons:
+  apt:
+    packages:
+    - python-pip
+
+cache:
+  directories:
+  - $HOME/.cache/pre-commit/
+
+before_cache:
+- rm -f $HOME/.cache/pre-commit/pre-commit.log
+
+install:
+  # Install Ansible with pip
+  - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then sudo pip install ansible==${ANSIBLE_VERSION}; fi
+
+  # Install pre-commit with pip
+  - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then sudo pip install pre-commit; fi
+
+  # Check Ansible version
+  - ansible --version
+
+  # Create ansible.cfg with correct roles_path
+  - printf '[defaults]\nroles_path=../\n' > ansible.cfg
+
+  # Configure ansible.cfg on Linux
+  - >
+    if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then
+      printf '\n[privilege_escalation]\nbecome=True' >> ansible.cfg
+    fi
+
+script:
+  # Run pre-commit hooks
+  - pre-commit run -a
+
+  # Basic role syntax check
+  - ansible-playbook tests/test.yml -i tests/inventory --syntax-check
+
+  # Test role run
+  - >
+    ansible-playbook tests/test.yml -i tests/inventory --connection=local
+
+  # Test idempotence
+  - >
+    ansible-playbook tests/test.yml -i tests/inventory --connection=local
+    | grep -q 'changed=0.*failed=0'
+    && (echo 'Idempotence test: pass' && exit 0)
+    || (echo 'Idempotence test: fail' && exit 1)
+
+  - bash -c 'command -v brew'

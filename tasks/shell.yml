@@ -1,0 +1,53 @@
+---
+
+
+- name: Check if Linuxbrew is was installed in {{ linuxbrew_shared_home }}
+  stat:
+    path: "{{ linuxbrew_shared_home }}/bin/brew"
+  register: linuxbrew_shared_shell_st
+
+- name: Check if Linuxbrew is was installed in {{ linuxbrew_user_home }}
+  stat:
+    path: "{{ linuxbrew_user_home }}/bin/brew"
+  register: linuxbrew_user_shell_st
+  become: no
+
+- name: Set path Linuxbrew home
+  set_fact:
+    linuxbrew_home: "{{ linuxbrew_shared_home }}"
+  when: linuxbrew_shared_shell_st.stat.exists
+
+- name: Set path Linuxbrew home
+  set_fact:
+    linuxbrew_home: "{{ linuxbrew_user_home }}"
+  when: linuxbrew_user_shell_st.stat.exists
+  become: no
+
+- name: Linuxbrew was installed
+  assert:
+    that:
+    - "linuxbrew_home is defined"
+
+- name: Check whether .bash_profile exists
+  stat:
+    path: "~/.bash_profile"
+  register: linuxbrew_bash_profile_path_st
+  become: no
+
+- name: Use ~/.bash_profile path to bash shell profile script
+  set_fact:
+    linuxbrew_bash_profile_path: "~/.bash_profile"
+  when: linuxbrew_bash_profile_path_st.stat.exists
+
+- name: Use ~/.profile bash shell profile script
+  set_fact:
+    linuxbrew_bash_profile_path: "~/.profile"
+  when: not linuxbrew_bash_profile_path_st.stat.exists
+
+- name: Load Linuxbrew in {{ linuxbrew_bash_profile_path }}
+  blockinfile:
+    dest: "{{ linuxbrew_bash_profile_path }}"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK: linuxbrew"
+    block: |
+      eval $({{ linuxbrew_home }}/bin/brew shellenv)
+  become: no

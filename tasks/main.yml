@@ -1,0 +1,19 @@
+---
+# tasks file for markosamuli.linuxbrew
+
+- name: Check if Linuxbrew is already installed in {{ linuxbrew_shared_home }}
+  stat:
+    path: "{{ linuxbrew_shared_home }}/bin/brew"
+  register: linuxbrew_shared_st
+  become: yes
+
+- name: Check if Linuxbrew is already installed in {{ linuxbrew_user_home }}
+  stat:
+    path: "{{ linuxbrew_user_home }}/bin/brew"
+  register: linuxbrew_user_st
+  become: no
+
+- include_tasks: install.yml
+  when: not linuxbrew_shared_st.stat.exists and not linuxbrew_user_st.stat.exists
+
+- include: shell.yml
