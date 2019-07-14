@@ -1,13 +1,18 @@
+# -*- mode: yaml -*-
+# vim:ts=2:sw=2:ai:si:syntax=yaml
+---
 galaxy_info:
+  role_name: linuxbrew
   author: Marko Samuli Kirves
   description: Install Linuxbrew
   license: MIT
-  min_ansible_version: 2.4
+  min_ansible_version: 2.6
+  github_branch: master
   platforms:
   - name: Ubuntu
     versions:
-    - trusty
     - xenial
+    - bionic
   galaxy_tags:
     - linuxbrew
 dependencies: []
