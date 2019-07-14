@@ -24,6 +24,22 @@ in the Ansible configuration:
 linuxbrew_use_installer: true
 ```
 
+## Coding style
+
+Install pre-commit hooks and validate coding style:
+
+```bash
+make lint
+```
+
+## Run tests
+
+Run tests in Ubuntu and Debian using Docker:
+
+```bash
+make test
+```
+
 ## License
 
 * [BSD License](LICENSE)
