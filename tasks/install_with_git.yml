@@ -9,6 +9,7 @@
   command: id -g
   register: linuxbrew_user_group
   become: "{{ linuxbrew_user }}"
+  changed_when: false
 
 - name: Set Linuxbrew group
   set_fact:
@@ -80,5 +81,15 @@
     state: "link"
   when: linuxbrew_prefix_shared != linuxbrew_repository
 
-- name: Update Homebrew
+- name: Path to portable-ruby vendor directory
+  set_fact:
+    linuxbrew_ruby_current: "{{ linuxbrew_repository }}/vendor/portable-ruby/current"
+
+- name: Path to portable-ruby binary
+  set_fact:
+    linuxbrew_ruby_path: "{{ linuxbrew_ruby_current }}/bin/ruby"
+
+- name: Update Homebrew to install portable Ruby
   command: "{{ linuxbrew_prefix_shared }}/bin/brew update --force"
+  args:
+    creates: "{{ linuxbrew_ruby_path }}"
