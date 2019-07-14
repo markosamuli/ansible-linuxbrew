@@ -1,43 +1,43 @@
+# -*- mode: yaml -*-
+# vim:ts=2:sw=2:ai:si:syntax=yaml
+#########################
+# Travis CI configuration
+#########################
 ---
 
+# Run tests against pull requests and main branches only
+if: |
+  type = pull_request OR \
+  branch IN (master, develop)
+
 language: generic
-python: "2.7"
 
-matrix:
-  include:
-    - os: linux
-      dist: trusty
-      sudo: required
-      env: ANSIBLE_VERSION=2.4.6.0
-    - os: linux
-      dist: xenial
-      sudo: required
-      env: ANSIBLE_VERSION=2.7.5.0
-
-# Install Ansible
+# Install PIP
 addons:
   apt:
     packages:
       - python-pip
+    update: true
 
 cache:
   directories:
     - $HOME/.cache/pre-commit/
 
-before_cache:
-  - rm -f $HOME/.cache/pre-commit/pre-commit.log
-
 install:
-  # Install Ansible with pip
+  # Install Ansible with pip on Ubuntu
   - >
     if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then
-      sudo pip install ansible==${ANSIBLE_VERSION}
+      if [[ -z "$ANSIBLE_VERSION" ]]; then
+        pip install --user ansible
+      else
+        pip install --user ansible${ANSIBLE_VERSION}
+      fi
     fi
 
-  # Install pre-commit with pip
+  # Install pre-commit with pip on Ubuntu
   - >
     if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then
-      sudo pip install pre-commit
+      pip install --user pre-commit
     fi
 
   # Check Ansible version
@@ -46,31 +46,96 @@ install:
   # Create ansible.cfg with correct roles_path
   - printf '[defaults]\nroles_path=../\n' > ansible.cfg
 
-  # Configure ansible.cfg on Linux
-  - >
-    if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then
-      printf '\n[privilege_escalation]\nbecome=True' >> ansible.cfg
-    fi
-
 script:
-  # Run pre-commit hooks
-  - pre-commit run -a
 
   # Basic role syntax check
   - ansible-playbook tests/test.yml -i tests/inventory --syntax-check
 
   # Test role run
   - >
-    ansible-playbook tests/test.yml -i tests/inventory --connection=local
+    if [[ "$USE_INSTALLER" == "yes" ]]; then
+      ansible-playbook tests/test.yml -i tests/inventory --connection=local \
+        -e "{'linuxbrew_use_installer':true}" \
+        || travis_terminate 1
+    else
+      ansible-playbook tests/test.yml -i tests/inventory --connection=local \
+        -e "{'linuxbrew_use_installer':false}" \
+        || travis_terminate 1
+    fi
 
   # Test idempotence
   - >
-    ansible-playbook tests/test.yml -i tests/inventory --connection=local
-    | grep -q 'changed=0.*failed=0'
-    && (echo 'Idempotence test: pass' && exit 0)
-    || (echo 'Idempotence test: fail' && exit 1)
+    if [[ "$USE_INSTALLER" == "yes" ]]; then
+      ansible-playbook tests/test.yml -i tests/inventory --connection=local \
+      -e "{'linuxbrew_use_installer':true}" \
+        | grep -q 'changed=0.*failed=0' \
+        && (echo 'Idempotence test: pass' && exit 0) \
+        || (echo 'Idempotence test: fail' && exit 1)
+    else
+      ansible-playbook tests/test.yml -i tests/inventory --connection=local \
+      -e "{'linuxbrew_use_installer':false}" \
+        | grep -q 'changed=0.*failed=0' \
+        && (echo 'Idempotence test: pass' && exit 0) \
+        || (echo 'Idempotence test: fail' && exit 1)
+    fi
 
   - >
     source ~/.bashrc
     && command -v brew
     && brew --version
+
+before_cache:
+  - rm -f $HOME/.cache/pre-commit/pre-commit.log
+
+stages:
+  - validate
+  - test
+
+jobs:
+  include:
+
+    # Run validation stage in Linux with latest Ansible only
+    - stage: validate
+      name: Validate with pre-commit
+      os: linux
+      dist: xenial
+      language: minimal
+      script:
+        - pre-commit run -a
+
+  # Run tests
+    - stage: test
+      name: "Ubuntu 16.04 with Ansible 2.6 using native installer"
+      os: linux
+      dist: xenial
+      env: ANSIBLE_VERSION='<2.7.0' USE_INSTALLER='yes'
+    - stage: test
+      name: "Ubuntu 16.04 with Ansible 2.7 using native installer"
+      os: linux
+      dist: xenial
+      env: ANSIBLE_VERSION='<2.8.0' USE_INSTALLER='yes'
+    - stage: test
+      name: "Ubuntu 18.04 with Ansible 2.8 using native installer"
+      os: linux
+      dist: bionic
+      env: ANSIBLE_VERSION='<2.9.0' USE_INSTALLER='yes'
+
+    - stage: test
+      name: "Ubuntu 16.04 with Ansible 2.6 without installer"
+      os: linux
+      dist: xenial
+      env: ANSIBLE_VERSION='<2.7.0' USE_INSTALLER='no'
+    - stage: test
+      name: "Ubuntu 16.04 with Ansible 2.7 without installer"
+      os: linux
+      dist: xenial
+      env: ANSIBLE_VERSION='<2.8.0' USE_INSTALLER='no'
+    - stage: test
+      name: "Ubuntu 18.04 with Ansible 2.8 without installer"
+      os: linux
+      dist: bionic
+      env: ANSIBLE_VERSION='<2.9.0' USE_INSTALLER='no'
+
+notifications:
+  webhooks:
+    - https://galaxy.ansible.com/api/v1/notifications/
