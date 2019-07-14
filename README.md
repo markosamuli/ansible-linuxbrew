@@ -22,13 +22,15 @@ in the Ansible configuration:
 linuxbrew_use_installer: true
 ```
 
-[Homebrew installer]: https://github.com/Linuxbrew/install
-
 ## License
 
-* This role is licensed under [MIT License](LICENSE)
-* Git installation is based on the official [Homebrew installer] licensed under
-  [BSD License](LICENSE)
+* [BSD License](LICENSE)
+
+## Contributions
+
+The installation is based on the official [Homebrew installer] script.
+
+[Homebrew installer]: https://github.com/Linuxbrew/install
 
 ## Author Information
 
