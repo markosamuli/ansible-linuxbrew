@@ -1,0 +1,7 @@
+---
+
+- name: Install dependencies with APT
+  apt:
+    name: "{{ linuxbrew_install_dependencies }}"
+  when: linuxbrew_install_dependencies is defined
+  become: yes

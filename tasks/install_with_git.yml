@@ -1,0 +1,84 @@
+---
+
+- name: Set Linuxbrew user
+  set_fact:
+    linuxbrew_user: "{{ ansible_user }}"
+  when: linuxbrew_user is undefined
+
+- name: Get group for user {{ linuxbrew_user }}
+  command: id -g
+  register: linuxbrew_user_group
+  become: "{{ linuxbrew_user }}"
+
+- name: Set Linuxbrew group
+  set_fact:
+    linuxbrew_group: "{{ linuxbrew_user_group.stdout }}"
+  when: linuxbrew_group is undefined
+
+- name: Create Linuxbrew directory
+  file:
+    path: "{{ linuxbrew_prefix_shared }}"
+    state: directory
+    owner: "{{ linuxbrew_user }}"
+    group: "{{ linuxbrew_group }}"
+    mode: "0755"
+  become: yes
+
+- name: Create Linuxbrew directories
+  file:
+    path: "{{ linuxbrew_prefix_shared }}/{{ item }}"
+    state: directory
+    owner: "{{ linuxbrew_user }}"
+    group: "{{ linuxbrew_group }}"
+    mode: "0755"
+  with_items:
+    - bin
+    - etc
+    - include
+    - lib
+    - sbin
+    - share
+    - var
+    - opt
+    - share/zsh
+    - share/zsh/site-functions
+    - Cellar
+    - Caskroom
+    - Homebrew
+    - Frameworks
+
+- name: Set path to Homebrew repository
+  set_fact:
+    linuxbrew_repository: "{{ linuxbrew_prefix_shared }}/Homebrew"
+
+- name: Clone Homebrew repository
+  git:
+    repo: "{{ linuxbrew_brew_repo }}"
+    dest: "{{ linuxbrew_repository }}"
+    version: "{{ linuxbrew_brew_version }}"
+
+- name: Clone Linuxbrew Core Tap repository
+  git:
+    repo: "{{ linuxbrew_core_tap_repo }}"
+    dest: "{{ linuxbrew_repository }}/Library/Taps/homebrew/homebrew-core"
+    version: "{{ linuxbrew_core_tap_version }}"
+
+- name: Update permissions
+  file:
+    path: "{{ item }}"
+    owner: "{{ linuxbrew_user }}"
+    group: "{{ linuxbrew_group }}"
+    mode: "0755"
+  with_items:
+    - "{{ linuxbrew_repository }}"
+    - "{{ linuxbrew_repository }}/Library/Taps/homebrew/homebrew-core"
+
+- name: Create symlink to brew binary
+  file:
+    dest: "{{ linuxbrew_prefix_shared }}/bin/brew"
+    src: "{{ linuxbrew_repository }}/bin/brew"
+    state: "link"
+  when: linuxbrew_prefix_shared != linuxbrew_repository
+
+- name: Update Homebrew
+  command: "{{ linuxbrew_prefix_shared }}/bin/brew update --force"

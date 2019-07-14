@@ -1,0 +1,7 @@
+---
+
+linuxbrew_install_dependencies:
+- git
+- curl
+- build-essential
+- locales

@@ -1,32 +1,17 @@
 ---
 
-- name: Set path to Linuxbrew home
+- name: Set path to Linuxbrew prefix
   set_fact:
-    linuxbrew_home: "{{ item }}"
+    linuxbrew_prefix: "{{ item }}"
   with_first_found:
-    - "{{ linuxbrew_shared_home }}"
-    - "{{ linuxbrew_user_home }}"
+    - "{{ linuxbrew_prefix_shared }}"
+    - "{{ linuxbrew_prefix_user }}"
   become: no
 
-- name: Linuxbrew was installed
-  assert:
-    that:
-    - "linuxbrew_home is defined"
+- name: Load Linuxbrew in bash
+  include_tasks: shell_bash.yml
+  when: linuxbrew_prefix is defined
 
-- name: Set path to bash shell profile script
-  set_fact:
-    linuxbrew_bash_profile_path: "{{ item }}"
-  become: no
-  with_first_found:
-    - "~/.bashrc"
-    - "~/.bash_profile"
-    - "~/.profile"
-
-- name: Load Linuxbrew in {{ linuxbrew_bash_profile_path }}
-  blockinfile:
-    dest: "{{ linuxbrew_bash_profile_path }}"
-    marker: "# {mark} ANSIBLE MANAGED BLOCK: linuxbrew"
-    block: |
-      eval $({{ linuxbrew_home }}/bin/brew shellenv)
-  when: linuxbrew_bash_profile_path is defined
-  become: no
+- name: Load Linuxbrew in zsh
+  include_tasks: shell_zsh.yml
+  when: linuxbrew_prefix is defined

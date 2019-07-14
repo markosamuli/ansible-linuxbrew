@@ -10,6 +10,11 @@ Ansible role to install [Linuxbrew](http://linuxbrew.sh/) on Ubuntu.
 
 [MIT](LICENSE)
 
+Git installation is based on the [Homebrew installer] licensed under
+[BSD License](LICENSE).
+
+[Homebrew installer]: https://github.com/Linuxbrew/install
+
 ## Author Information
 
 - [@markosamuli](https://github.com/markosamuli)

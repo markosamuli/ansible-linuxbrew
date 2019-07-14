@@ -1,0 +1,10 @@
+---
+
+# Path to user home directory
+linuxbrew_home: "{{ ansible_env.HOME }}"
+
+# Installation under user home directory
+linuxbrew_prefix_user: "{{ linuxbrew_home }}/.linuxbrew"
+
+# Install using the installer script
+linuxbrew_use_installer: false

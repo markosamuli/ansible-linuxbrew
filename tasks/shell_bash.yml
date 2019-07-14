@@ -1,0 +1,24 @@
+---
+
+- name: Set path to .bashrc
+  set_fact:
+    linuxbrew_bashrc_path: "{{ linuxbrew_home }}/.bashrc"
+  when: linuxbrew_bashrc_path is undefined
+
+- name: Check whether .bashrc file exists
+  stat:
+    path: "{{ linuxbrew_bashrc_path }}"
+  register: linuxbrew_bashrc_st
+
+- name: Resolve .bashrc symlink
+  set_fact:
+    linuxbrew_bashrc_path: "{{ linuxbrew_bashrc_st.stat.lnk_source }}"
+  when: linuxbrew_bashrc_st.stat.exists and linuxbrew_bashrc_st.stat.islnk
+
+- name: Load Linuxbrew in .bashrc
+  blockinfile:
+    dest: "{{ linuxbrew_bashrc_path }}"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK: linuxbrew"
+    block: |
+      eval $({{ linuxbrew_prefix }}/bin/brew shellenv)
+  when: linuxbrew_bashrc_st.stat.exists
