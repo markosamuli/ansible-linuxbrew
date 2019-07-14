@@ -3,8 +3,20 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJECT_ROOT=$(dirname $DIR)
 
-ROLE_NAME=ansible-linuxbrew
+ROLE_NAME="$(basename $PROJECT_ROOT)"
 TEST_HOME=/home/test
+
+###
+# Detect Windows Subsystem for Linux
+###
+function detect_wsl {
+    if grep -q Microsoft /proc/version; then
+        echo "*** Windows Subsystem for Linux detected"
+        is_wsl=1
+    else
+        is_wsl=0
+    fi
+}
 
 ###
 # Stop all containers
@@ -47,7 +59,7 @@ function start {
     local container_name=${ROLE_NAME}-${image}-tests
     echo "*** Start container"
     docker run --rm -it -d \
-        -v $(pwd):${TEST_HOME}/${ROLE_NAME} \
+        -v ${MOUNT_ROOT}:${TEST_HOME}/${ROLE_NAME} \
         --name ${container_name} \
         $image_name
 }
@@ -67,13 +79,26 @@ function run_tests {
 
 trap finish EXIT
 
+detect_wsl
+
+cd $DIR
+
+images=( "$@" )
+if [ ${#images[@]} -eq 0 ]; then
+    images=( */Dockerfile )
+    images=( "${images[@]/\/Dockerfile/}" )
+fi
+
 cd $PROJECT_ROOT
+
+if [ "${is_wsl}" == "1" ]; then
+    MOUNT_ROOT="$(pwd -P | sed 's~/mnt/c/~c:/~')"
+else
+    MOUNT_ROOT="$(pwd -P)"
+fi
 
 set -e
 
-printf '[defaults]\nroles_path=../\n' > ansible.cfg
-
-images=( bionic xenial )
 for i in "${images[@]}"; do
     build $i
     start $i

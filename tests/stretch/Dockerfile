@@ -1,4 +1,4 @@
-FROM ubuntu:xenial
+FROM debian:stretch
 
 RUN apt-get update && apt-get install -y \
     python-minimal \
