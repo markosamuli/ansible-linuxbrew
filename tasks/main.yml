@@ -11,17 +11,18 @@
   stat:
     path: "{{ linuxbrew_prefix_shared }}/bin/brew"
   register: linuxbrew_shared_st
-  become: yes
+  become: true
 
 - name: Check if Linuxbrew is already installed in {{ linuxbrew_prefix_user }}
   stat:
     path: "{{ linuxbrew_prefix_user }}/bin/brew"
   register: linuxbrew_user_st
-  become: no
+  become: false
 
 - name: Install Linuxbrew
   include_tasks: install.yml
-  when: not linuxbrew_shared_st.stat.exists and not linuxbrew_user_st.stat.exists
+  when: not linuxbrew_shared_st.stat.exists
+        and not linuxbrew_user_st.stat.exists
 
 - name: Configure Linuxbrew in shell
   include_tasks: shell.yml

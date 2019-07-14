@@ -4,7 +4,7 @@
   file:
     path: "{{ linuxbrew_install_tmp }}"
     state: directory
-  become: no
+  become: false
 
 - name: Download Linuxbrew install script
   get_url:
@@ -12,16 +12,16 @@
     dest: "{{ linuxbrew_install_tmp }}/install.sh"
     checksum: "{{ linuxbrew_install_checksum }}"
     mode: 0777
-  become: no
+  become: false
 
 - name: Install Linuxbrew
   command: sh -c "{{ linuxbrew_install_tmp }}/install.sh"
   register: install_result
   changed_when: "install_result.rc == 0"
-  become: no
+  become: false
 
 - name: Remove temporary directory
   file:
     path: "{{ linuxbrew_install_tmp }}"
     state: absent
-  become: no
+  become: false

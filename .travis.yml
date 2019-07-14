@@ -18,21 +18,27 @@ matrix:
 addons:
   apt:
     packages:
-    - python-pip
+      - python-pip
 
 cache:
   directories:
-  - $HOME/.cache/pre-commit/
+    - $HOME/.cache/pre-commit/
 
 before_cache:
-- rm -f $HOME/.cache/pre-commit/pre-commit.log
+  - rm -f $HOME/.cache/pre-commit/pre-commit.log
 
 install:
   # Install Ansible with pip
-  - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then sudo pip install ansible==${ANSIBLE_VERSION}; fi
+  - >
+    if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then
+      sudo pip install ansible==${ANSIBLE_VERSION}
+    fi
 
   # Install pre-commit with pip
-  - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then sudo pip install pre-commit; fi
+  - >
+    if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then
+      sudo pip install pre-commit
+    fi
 
   # Check Ansible version
   - ansible --version

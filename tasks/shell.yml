@@ -6,7 +6,7 @@
   with_first_found:
     - "{{ linuxbrew_prefix_shared }}"
     - "{{ linuxbrew_prefix_user }}"
-  become: no
+  become: true
 
 - name: Load Linuxbrew in bash
   include_tasks: shell_bash.yml

@@ -22,7 +22,7 @@
     owner: "{{ linuxbrew_user }}"
     group: "{{ linuxbrew_group }}"
     mode: "0755"
-  become: yes
+  become: true
 
 - name: Create Linuxbrew directories
   file:
