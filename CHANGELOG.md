@@ -2,13 +2,13 @@
 
 ## [1.1.0] - 2019-07-14
 
-## Changes
+### Changes
 
 * Use Ansible tasks to clone the Homebrew Git repositories, create directories
   and set permissions where possible instead of using the official installer
   bash script.
 
-## Fixes
+### Fixes
 
 * Install installation dependencies.
 * Update both `.bashrc` and `.zshrc` shell scripts.
