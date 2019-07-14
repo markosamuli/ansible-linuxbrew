@@ -7,7 +7,7 @@
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks.git
-    rev: v2.1.0
+    rev: v2.2.3
     hooks:
       - id: check-executables-have-shebangs
       - id: check-byte-order-marker
@@ -23,7 +23,7 @@ repos:
         args: ['--autofix', '--indent=2', '--no-sort-keys']
 
   - repo: https://github.com/adrienverge/yamllint.git
-    rev: v1.15.0
+    rev: v1.16.0
     hooks:
       - id: yamllint
 
@@ -46,6 +46,6 @@ repos:
         files: (tests/run-.*|tests/update)$
 
   - repo: https://github.com/igorshubovych/markdownlint-cli.git
-    rev: 'v0.15.0'
+    rev: v0.17.0
     hooks:
       - id: markdownlint
