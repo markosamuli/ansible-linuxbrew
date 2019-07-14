@@ -67,14 +67,27 @@ function start {
 ###
 # Run tests in the container
 ###
-function run_tests {
+function run_tests_with_git {
     local image=$1
     local container_name=${ROLE_NAME}-${image}-tests
-    echo "*** Run tests"
+    echo "*** Run tests installing with Ansible from Git"
     docker exec -it \
         --user test \
         ${container_name} \
-        ${TEST_HOME}/${ROLE_NAME}/tests/run-tests-docker
+        ${TEST_HOME}/${ROLE_NAME}/tests/run-tests-with-git
+}
+
+###
+# Run tests in the container
+###
+function run_tests_with_installer {
+    local image=$1
+    local container_name=${ROLE_NAME}-${image}-tests
+    echo "*** Run tests installing with the Linuxbrew installer"
+    docker exec -it \
+        --user test \
+        ${container_name} \
+        ${TEST_HOME}/${ROLE_NAME}/tests/run-tests-with-installer
 }
 
 trap finish EXIT
@@ -101,7 +114,16 @@ set -e
 
 for i in "${images[@]}"; do
     build $i
+done
+
+for i in "${images[@]}"; do
     start $i
-    run_tests $i
+    run_tests_with_git $i
+    stop $i
+done
+
+for i in "${images[@]}"; do
+    start $i
+    run_tests_with_installer $i
     stop $i
 done

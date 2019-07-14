@@ -7,6 +7,7 @@ set -e
 
 # Variables to pass to ansible-playbook
 ansible_vars=(
+    "'linuxbrew_use_installer':true"
 )
 extra_vars=$(printf ",%s" "${ansible_vars[@]}")
 extra_vars="{${extra_vars:1}}"
@@ -23,7 +24,7 @@ ansible-playbook tests/test.yml -i tests/inventory --syntax-check
 echo "*** Run Ansible playbook"
 
 ansible-playbook tests/test.yml -i tests/inventory --connection=local \
-    -e "${extra_vars}" -vv
+    -e "${extra_vars}"
 
 echo "*** Idempotence test"
 
@@ -32,7 +33,6 @@ ansible-playbook tests/test.yml -i tests/inventory --connection=local \
     | grep -q 'changed=0.*failed=0' \
     && (echo 'Idempotence test: pass' && exit 0) \
     || (echo 'Idempotence test: fail' && exit 1)
-
 
 echo "*** Verify installed Linuxbrew version"
 
