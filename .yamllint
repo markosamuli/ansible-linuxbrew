@@ -1,0 +1,29 @@
+# -*- mode: yaml -*-
+# vim:ts=2:sw=2:ai:si:syntax=yaml
+#
+# yamllint configuration directives
+# Project Homepage: https://github.com/adrienverge/yamllint
+#
+# Overriding rules in files:
+# http://yamllint.readthedocs.io/en/latest/disable_with_comments.html
+---
+extends: default
+
+# Rules documentation: http://yamllint.readthedocs.io/en/latest/rules.html
+rules:
+
+  document-start:
+    present: true
+
+  indentation:
+    # Requiring 2 space indentation
+    spaces: 2
+    # Requiring consistent indentation within a file, either indented or not
+    indent-sequences: true
+    # Lint indentation in multi-line strings
+    check-multi-line-strings: false
+
+  line-length:
+    max: 80
+    level: warning
+    allow-non-breakable-inline-mappings: true
