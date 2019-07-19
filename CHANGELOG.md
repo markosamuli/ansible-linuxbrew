@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreased] - 2019-07-20
+## [1.1.1] - 2019-07-20
 
 ### Fixes
 
@@ -23,5 +23,6 @@
 
 Initial release using the official Homebrew installer.
 
+[1.1.1]: https://github.com/markosamuli/ansible-linuxbrew/releases/tag/v1.1.1
 [1.1.0]: https://github.com/markosamuli/ansible-linuxbrew/releases/tag/v1.1.0
 [1.0.0]: https://github.com/markosamuli/ansible-linuxbrew/releases/tag/v1.0.0
