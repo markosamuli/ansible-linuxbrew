@@ -1,5 +1,11 @@
 # Changelog
 
+## [Unreased] - 2019-07-20
+
+### Fixes
+
+* Updated `install.sh` checksum for the 2019-07-18 updated version.
+
 ## [1.1.0] - 2019-07-14
 
 ### Changes
