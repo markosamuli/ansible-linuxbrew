@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased] - 2019-10-25
+## [1.2.0] - 2019-10-25
 
 ### Changes
 
@@ -30,6 +30,7 @@
 
 Initial release using the official Homebrew installer.
 
+[1.2.0]: https://github.com/markosamuli/ansible-linuxbrew/releases/tag/v1.2.0
 [1.1.1]: https://github.com/markosamuli/ansible-linuxbrew/releases/tag/v1.1.1
 [1.1.0]: https://github.com/markosamuli/ansible-linuxbrew/releases/tag/v1.1.0
 [1.0.0]: https://github.com/markosamuli/ansible-linuxbrew/releases/tag/v1.0.0
