@@ -24,6 +24,16 @@ in the Ansible configuration:
 linuxbrew_use_installer: true
 ```
 
+## Role Variables
+
+Set `linuxbrew_init_shell` to `false` if you're for example managing your shell
+rc files using your own .dotfiles repository.
+
+```yaml
+# Configure shell rc files
+linuxbrew_init_shell: true
+```
+
 ## Coding style
 
 Install pre-commit hooks and validate coding style:

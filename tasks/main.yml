@@ -26,3 +26,4 @@
 
 - name: Configure Linuxbrew in shell
   include_tasks: shell.yml
+  when: linuxbrew_init_shell|bool

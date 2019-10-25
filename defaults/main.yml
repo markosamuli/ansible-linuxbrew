@@ -8,3 +8,6 @@ linuxbrew_prefix_user: "{{ linuxbrew_home }}/.linuxbrew"
 
 # Install using the installer script
 linuxbrew_use_installer: false
+
+# Configure shell rc files
+linuxbrew_init_shell: true
