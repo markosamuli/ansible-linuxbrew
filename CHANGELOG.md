@@ -1,5 +1,12 @@
 # Changelog
 
+## [Unreleased] - 2019-10-25
+
+### Changes
+
+* Add `linuxbrew_init_shell` variable to allow shell file modification to be
+  disabled. Fixes [#1]
+
 ## [1.1.1] - 2019-07-20
 
 ### Fixes
@@ -26,3 +33,4 @@ Initial release using the official Homebrew installer.
 [1.1.1]: https://github.com/markosamuli/ansible-linuxbrew/releases/tag/v1.1.1
 [1.1.0]: https://github.com/markosamuli/ansible-linuxbrew/releases/tag/v1.1.0
 [1.0.0]: https://github.com/markosamuli/ansible-linuxbrew/releases/tag/v1.0.0
+[#1]: https://github.com/markosamuli/ansible-linuxbrew/issues/1
