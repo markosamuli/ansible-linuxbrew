@@ -4,6 +4,7 @@
   file:
     path: "{{ linuxbrew_install_tmp }}"
     state: directory
+    mode: "0777"
   become: false
 
 - name: Download Linuxbrew install script
@@ -11,7 +12,7 @@
     url: "{{ linuxbrew_install_url }}"
     dest: "{{ linuxbrew_install_tmp }}/install.sh"
     checksum: "{{ linuxbrew_install_checksum }}"
-    mode: 0777
+    mode: "0777"
   become: false
 
 - name: Install Linuxbrew
