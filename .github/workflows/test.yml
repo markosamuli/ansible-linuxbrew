@@ -2,7 +2,7 @@
 name: Test
 
 # This workflow is triggered on pushes to the repository.
-on:
+on:  # yamllint disable-line rule:truthy
   push:
     branches:
       - master
@@ -16,6 +16,9 @@ jobs:
   focal:
     name: Test on Ubuntu 20.04 LTS (focal)
     runs-on: ubuntu-latest
+    env:
+      DISTRIB: ubuntu
+      RELEASE: focal
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-python@v1
@@ -25,12 +28,20 @@ jobs:
       - name: Install dependencies
         run: pip3 install -r requirements.dev.txt
       - name: Update test images
-        run: ./tests/update_test_images.py --release=focal
-      - name: Run tests with Git install
-        run: ./tests/run-tests.sh focal
+        run: |
+          ./tests/update_test_images.py \
+            --distrib=${DISTRIB} \
+            --release=${RELEASE}
+      - name: Run tests with Git
+        run: ./tests/run-tests.sh ${RELEASE} --with-git --without-installer
+      - name: Run tests with installer
+        run: ./tests/run-tests.sh ${RELEASE} --without-git --with-installer
   bionic:
     name: Test on Ubuntu 18.04 LTS (bionic)
     runs-on: ubuntu-latest
+    env:
+      DISTRIB: ubuntu
+      RELEASE: bionic
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-python@v1
@@ -40,12 +51,20 @@ jobs:
       - name: Install dependencies
         run: pip3 install -r requirements.dev.txt
       - name: Update test images
-        run: ./tests/update_test_images.py --release=bionic
-      - name: Run tests with Git install
-        run: ./tests/run-tests.sh bionic
+        run: |
+          ./tests/update_test_images.py \
+            --distrib=${DISTRIB} \
+            --release=${RELEASE}
+      - name: Run tests with Git
+        run: ./tests/run-tests.sh ${RELEASE} --with-git --without-installer
+      - name: Run tests with installer
+        run: ./tests/run-tests.sh ${RELEASE} --without-git --with-installer
   xenial:
     name: Test on Ubuntu 16.04 LTS (xenial)
     runs-on: ubuntu-latest
+    env:
+      DISTRIB: ubuntu
+      RELEASE: xenial
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-python@v1
@@ -55,12 +74,20 @@ jobs:
       - name: Install dependencies
         run: pip3 install -r requirements.dev.txt
       - name: Update test images
-        run: ./tests/update_test_images.py --release=xenial
-      - name: Run tests with Git install
-        run: ./tests/run-tests.sh xenial
+        run: |
+          ./tests/update_test_images.py \
+            --distrib=${DISTRIB} \
+            --release=${RELEASE}
+      - name: Run tests with Git
+        run: ./tests/run-tests.sh ${RELEASE} --with-git --without-installer
+      - name: Run tests with installer
+        run: ./tests/run-tests.sh ${RELEASE} --without-git --with-installer
   stretch:
     name: Test on Debian stretch
     runs-on: ubuntu-latest
+    env:
+      DISTRIB: debian
+      RELEASE: stretch
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-python@v1
@@ -70,12 +97,20 @@ jobs:
       - name: Install dependencies
         run: pip3 install -r requirements.dev.txt
       - name: Update test images
-        run: ./tests/update_test_images.py --release=stretch
-      - name: Run tests with Git install
-        run: ./tests/run-tests.sh stretch
+        run: |
+          ./tests/update_test_images.py \
+            --distrib=${DISTRIB} \
+            --release=${RELEASE}
+      - name: Run tests with Git
+        run: ./tests/run-tests.sh ${RELEASE} --with-git --without-installer
+      - name: Run tests with installer
+        run: ./tests/run-tests.sh ${RELEASE} --without-git --with-installer
   buster:
     name: Test on Debian buster
     runs-on: ubuntu-latest
+    env:
+      DISTRIB: debian
+      RELEASE: buster
     steps:
       - uses: actions/checkout@v1
       - uses: actions/setup-python@v1
@@ -85,6 +120,11 @@ jobs:
       - name: Install dependencies
         run: pip3 install -r requirements.dev.txt
       - name: Update test images
-        run: ./tests/update_test_images.py --release=buster
-      - name: Run tests with Git install
-        run: ./tests/run-tests.sh buster
+        run: |
+          ./tests/update_test_images.py \
+            --distrib=${DISTRIB} \
+            --release=${RELEASE}
+      - name: Run tests with Git
+        run: ./tests/run-tests.sh ${RELEASE} --with-git --without-installer
+      - name: Run tests with installer
+        run: ./tests/run-tests.sh ${RELEASE} --without-git --with-installer
