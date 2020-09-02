@@ -33,11 +33,12 @@ repos:
       - id: ansible-lint
         files: \.(yaml|yml)$
 
-  - repo: https://github.com/bemeurer/beautysh.git
-    rev: '4.1'
+  - repo: https://github.com/syntaqx/git-hooks
+    rev: v0.0.16
     hooks:
-      - id: beautysh
-        files: (tests/run-.*|tests/update)$
+      - id: shellcheck
+      - id: shfmt
+        args: ["-l", "-i", "4", "-ci", "-w"]
 
   - repo: https://github.com/openstack-dev/bashate.git
     rev: '0.6.0'
@@ -49,3 +50,31 @@ repos:
     rev: v0.17.0
     hooks:
       - id: markdownlint
+
+  - repo: https://github.com/psf/black
+    rev: 20.8b1
+    hooks:
+      - id: black
+        # Do not run on Git push
+        stages: [commit]
+
+  - repo: https://gitlab.com/pycqa/flake8
+    rev: 3.8.3
+    hooks:
+      - id: flake8
+
+  - repo: https://github.com/PyCQA/bandit
+    rev: 1.6.2
+    hooks:
+      - id: bandit
+
+  # Validate Python code with pylint using local environment
+  # to avoid 'import-error' issues.
+  - repo: local
+    hooks:
+      - id: pylint
+        name: Lint Python files with pylint
+        entry: python -m pylint
+        types: [python]
+        language: system
+        require_serial: false
