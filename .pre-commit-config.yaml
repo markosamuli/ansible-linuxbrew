@@ -28,7 +28,7 @@ repos:
       - id: yamllint
 
   - repo: https://github.com/ansible/ansible-lint.git
-    rev: v4.1.0
+    rev: v4.3.3
     hooks:
       - id: ansible-lint
         files: \.(yaml|yml)$
@@ -44,7 +44,6 @@ repos:
     rev: '0.6.0'
     hooks:
       - id: bashate
-        files: (tests/run-.*|tests/update)$
 
   - repo: https://github.com/igorshubovych/markdownlint-cli.git
     rev: v0.17.0
