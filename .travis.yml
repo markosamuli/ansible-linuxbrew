@@ -110,7 +110,7 @@ jobs:
       script:
         - pre-commit run -a
 
-  # Run tests
+    # Run tests
     - stage: test
       name: "Ubuntu 16.04 with Ansible 2.6 using native installer"
       os: linux

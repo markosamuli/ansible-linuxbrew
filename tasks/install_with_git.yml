@@ -83,6 +83,7 @@
 
 - name: Path to portable-ruby vendor directory
   set_fact:
+    # yamllint disable-line rule:line-length
     linuxbrew_ruby_current: "{{ linuxbrew_repository }}/vendor/portable-ruby/current"
 
 - name: Path to portable-ruby binary
