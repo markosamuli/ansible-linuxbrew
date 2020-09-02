@@ -114,16 +114,10 @@ def parse_dockerfile(dockerfile) -> Tuple[str, str, str]:
     """
     Parse build target information from the Dockerfile path
     """
-    git = True
-    homebrew = False
     image = dockerfile.replace("tests/images/", "").replace("/Dockerfile", "")
-    if "-with-homebrew" in image:
-        image = image.replace("-with-homebrew", "")
-        git = False
-        homebrew = True
     if image not in list_releases():
         raise ValueError(f"invalid build target {dockerfile}")
-    return image, git, homebrew
+    return image
 
 
 @click.command()
@@ -132,15 +126,13 @@ def parse_dockerfile(dockerfile) -> Tuple[str, str, str]:
 )
 @click.option("--release", type=click.Choice(list_releases(), case_sensitive=False))
 @click.option("--dockerfile", type=str)
-def update_test_images(
-    distrib: str, release: str, dockerfile: str
-):
+def update_test_images(distrib: str, release: str, dockerfile: str):
     """
     Generate Docker images for supported Ubuntu and Debian releases
     """
 
     if dockerfile:
-        release, git, homebrew = parse_dockerfile(dockerfile)
+        release = parse_dockerfile(dockerfile)
 
     for image, releases in images.items():
         if distrib and image != distrib:
