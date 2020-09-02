@@ -8,6 +8,9 @@ TEST_HOME=/home/test
 
 IMAGES_DIR="images"
 
+test_with_git="true"
+test_with_installer="true"
+
 docker_run_opts=()
 
 error() {
@@ -100,14 +103,18 @@ start() {
 
 run_tests() {
     local image=$1
-    run_tests_with_git "$image" || {
-        error "failed Git installation in ${image}"
-        return 1
-    }
-    run_tests_with_installer "$image" || {
-        error "failed native installer in ${image}"
-        return 1
-    }
+    if [ "${test_with_git}" == "true" ]; then
+        run_tests_with_git "$image" || {
+            error "failed Git installation in ${image}"
+            return 1
+        }
+    fi
+    if [ "${test_with_installer}" == "true" ]; then
+        run_tests_with_installer "$image" || {
+            error "failed native installer in ${image}"
+            return 1
+        }
+    fi
 }
 
 run_tests_with_git() {
@@ -115,14 +122,18 @@ run_tests_with_git() {
     local test_scripts=(
         "test_with_git.sh"
     )
+    local failed=0
     echo "*** Run tests installing with Ansible from Git"
     for test_script in "${test_scripts[@]}"; do
         start "${image}"
-        run_test_script "${image}" "${test_script}"
+        run_test_script "${image}" "${test_script}" || failed=1
         stop "${image}"
         # Give Docker time to clean up
         sleep 1
     done
+    if [ "${failed}" -gt "0" ]; then
+        return "${failed}"
+    fi
 }
 
 run_tests_with_installer() {
@@ -130,14 +141,18 @@ run_tests_with_installer() {
     local test_scripts=(
         "test_with_installer.sh"
     )
+    local failed=0
     echo "*** Run tests installing with the Linuxbrew installer"
     for test_script in "${test_scripts[@]}"; do
         start "${image}"
-        run_test_script "${image}" "${test_script}"
+        run_test_script "${image}" "${test_script}" || failed=1
         stop "${image}"
         # Give Docker time to clean up
         sleep 1
     done
+    if [ "${failed}" -gt "0" ]; then
+        return "${failed}"
+    fi
 }
 
 run_test_script() {
@@ -149,13 +164,45 @@ run_test_script() {
         "${docker_run_opts[@]}" \
         --user test \
         "${container_name}" \
-        bash -ilc "${TEST_HOME}/${ROLE_NAME}/tests/${test_script}"
+        "${TEST_HOME}/${ROLE_NAME}/tests/${test_script}" || {
+        error "${test_script} on ${image} failed"
+        return 1
+    }
 }
 
 if ! command -v docker /dev/null; then
     error "docker not found"
     exit 1
 fi
+
+# Parse command line arguments
+POSITIONAL=()
+while [[ $# -gt 0 ]]; do
+    key="$1"
+    case $key in
+        --with-git)
+            test_with_git="true"
+            shift
+            ;;
+        --without-git)
+            test_with_git="false"
+            shift
+            ;;
+        --with-installer)
+            test_with_installer="true"
+            shift
+            ;;
+        --without-installer)
+            test_with_installer="false"
+            shift
+            ;;
+        *)                     # unknown option
+            POSITIONAL+=("$1") # save it in an array for later
+            shift              # past argument
+            ;;
+    esac
+done
+set -- "${POSITIONAL[@]}" # restore positional parameters
 
 trap finish EXIT
 
@@ -179,9 +226,15 @@ setup_mount_root
 set -e
 
 for i in "${images[@]}"; do
-    build "$i"
+    build "$i" || {
+        error "failed to build $i"
+        exit 1
+    }
 done
 
 for i in "${images[@]}"; do
-    run_tests "$i"
+    run_tests "$i" || {
+        error "failed tests in $i"
+        exit 1
+    }
 done

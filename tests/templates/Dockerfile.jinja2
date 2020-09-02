@@ -37,7 +37,8 @@ RUN useradd -m ${user} -s /bin/bash \
  && echo "${user}:${user}" | chpasswd \
  && adduser ${user} sudo \
  && echo '%sudo ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
-RUN touch /home/${user}/.zshrc \
+RUN touch /home/${user}/.bashrc \
+ && touch /home/${user}/.zshrc \
  && chown -R ${user}:${user} /home/${user}
 
 # Create directory for code
