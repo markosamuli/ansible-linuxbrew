@@ -12,5 +12,5 @@ linuxbrew_core_tap_version: master
 
 # Linuxbrew installer script
 linuxbrew_install_tmp: "/tmp/linuxbrew"
-linuxbrew_install_url: "https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh"
-linuxbrew_install_checksum: "sha256:5da71a2f71e61caa358c9b35371edd8c6b470635dd769d3d8e7295cb2c71153d"
+linuxbrew_install_url: "https://raw.githubusercontent.com/Homebrew/install/master/install.sh"
+linuxbrew_install_checksum: "sha256:8e6ca3debd18bdde5c69fba1c03757fdae5c9b53a874a92ec2937bc686396958"
