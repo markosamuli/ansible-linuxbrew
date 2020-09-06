@@ -40,6 +40,7 @@
     - sbin
     - share
     - var
+    - var/homebrew/linked
     - opt
     - share/zsh
     - share/zsh/site-functions
