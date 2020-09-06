@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.2.2] - 2020-09-06
+
+### Fixed
+
+* Update `install.sh` checksum
+
 ## [1.2.1] - 2020-09-05
 
 ### Fixed
@@ -36,6 +42,7 @@
 
 Initial release using the official Homebrew installer.
 
+[1.2.2]: https://github.com/markosamuli/ansible-linuxbrew/releases/tag/v1.2.2
 [1.2.1]: https://github.com/markosamuli/ansible-linuxbrew/releases/tag/v1.2.1
 [1.2.0]: https://github.com/markosamuli/ansible-linuxbrew/releases/tag/v1.2.0
 [1.1.1]: https://github.com/markosamuli/ansible-linuxbrew/releases/tag/v1.1.1
