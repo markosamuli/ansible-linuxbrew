@@ -5,6 +5,8 @@
 ### Fixed
 
 * Update `install.sh` checksum
+* Create missing `var/homebrew/linked` directory
+* Update `linuxbrew-core` repository URL
 
 ## [1.2.1] - 2020-09-05
 
