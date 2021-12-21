@@ -4,6 +4,10 @@
   include_tasks: install_debian.yml
   when: "ansible_os_family == 'Debian' or ansible_distribution == 'Pengwin'"
 
+- name: Install dependencies on RedHat based systems
+  include_tasks: install_redhat.yml
+  when: "ansible_os_family == 'RedHat'"
+
 - name: Install with Git
   include_tasks: install_with_git.yml
   when: not linuxbrew_use_installer

@@ -18,6 +18,9 @@ galaxy_info:
       versions:
         - buster
         - stretch
+    - name: Fedora
+      versions:
+        - 35
   galaxy_tags:
     - linuxbrew
     - homebrew

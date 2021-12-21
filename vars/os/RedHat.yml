@@ -1,0 +1,10 @@
+---
+
+linuxbrew_install_dependencies:
+  - '@Development Tools'
+  - git
+  - curl
+  - procps-ng
+  - file
+  - libxcrypt-compat
+
