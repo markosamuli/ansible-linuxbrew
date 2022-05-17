@@ -8,7 +8,7 @@
 - name: Get group for user {{ linuxbrew_user }}
   command: id -g
   register: linuxbrew_user_group
-  become: "{{ linuxbrew_user }}"
+  become_user: "{{ linuxbrew_user }}"
   changed_when: false
 
 - name: Set Linuxbrew group
