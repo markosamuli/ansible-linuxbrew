@@ -63,3 +63,7 @@ The installation is based on the official [Homebrew installer] script.
 ## Author Information
 
 * [@markosamuli](https://github.com/markosamuli)
+
+### Contributors
+
+* [@aairey](https://github.com/aairey)
