@@ -11,6 +11,8 @@ linuxbrew_core_tap_repo: https://github.com/Homebrew/linuxbrew-core
 linuxbrew_core_tap_version: master
 
 # Linuxbrew installer script
+# Update to the latest version from time to time by pointing tot the latest commit and checksum
+# https://github.com/Homebrew/install/commits/master/install.sh
 linuxbrew_install_tmp: "/tmp/linuxbrew"
-linuxbrew_install_url: "https://raw.githubusercontent.com/Homebrew/install/master/install.sh"
-linuxbrew_install_checksum: "sha256:a138ff0ef9943e453499e17e61c202dd3e509e4af208cbb6d3aacc1d758cfb21"
+linuxbrew_install_url: "https://raw.githubusercontent.com/Homebrew/install/fcfea5bbf7130d754360d3056601bad131b09762/install.sh"
+linuxbrew_install_checksum: "sha256:bcdaa4ade908e3766c74883f829c3dbb553a9808899bf58702651bd229d0c463"
