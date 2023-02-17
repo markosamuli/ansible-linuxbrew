@@ -67,7 +67,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Run tests
+      - name: Run tests on ${{ matrix.release }}
         run: ./tests/run-tests ${RELEASE}
 
   debian:
@@ -84,7 +84,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Run tests
+      - name: Run tests on ${{ matrix.release }}
         run: ./tests/run-tests ${RELEASE}
 
   fedora:
@@ -101,7 +101,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Run tests
+      - name: Run tests on ${{ matrix.release }}
         run: ./tests/run-tests ${RELEASE}
 
   release:
