@@ -34,7 +34,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip3 install pre-commit
-          go install mvdan.cc/sh/v3/cmd/shfmt
+          go install mvdan.cc/sh/v3/cmd/shfmt@latest
           sudo apt-get install -y shellcheck
           python --version
           shfmt -version
