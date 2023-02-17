@@ -67,8 +67,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Run tests on ${{ matrix.release }}
-        run: ./tests/run-tests ${RELEASE}
+      - name: Run tests on ${{ matrix.distrib }}:${{ matrix.release }}
+        run: ./tests/run-tests ${DISTRIB}-${RELEASE}
 
   debian:
     runs-on: ubuntu-latest
@@ -84,15 +84,15 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Run tests on ${{ matrix.release }}
-        run: ./tests/run-tests ${RELEASE}
+      - name: Run tests on ${{ matrix.distrib }}:${{ matrix.release }}
+        run: ./tests/run-tests ${DISTRIB}-${RELEASE}
 
   fedora:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         distrib: [fedora]
-        release: [fedora37]
+        release: [37]
 
     name: Test - ${{ matrix.distrib }} ${{ matrix.release }}
     env:
@@ -101,8 +101,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Run tests on ${{ matrix.release }}
-        run: ./tests/run-tests ${RELEASE}
+      - name: Run tests on ${{ matrix.distrib }}:${{ matrix.release }}
+        run: ./tests/run-tests ${DISTRIB}-${RELEASE}
 
   release:
     name: Publish tagged releases to Ansible Galaxy

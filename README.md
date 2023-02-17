@@ -15,14 +15,14 @@ Run tests with a supported Docker image, for example with `bionic`:
 make bionic
 ```
 
-| Release          | Docker image           | Ansible          |
-| ---------------- | ---------------------- | ---------------- |
-| Ubuntu 18.04 LTS | [`bionic`][bionic]     | `<2.12,>=2.9.22` |
-| Ubuntu 20.04 LTS | [`focal`][focal]       | `>=2.9.22`       |
-| Ubuntu 22.04 LTS | [`jammy`][jammy]       | `>=2.9.22`       |
-| Debian 10        | [`buster`][buster]     | `<2.12,>=2.9.22` |
-| Debian 11        | [`bullseye`][bullseye] | `>=2.9.22`       |
-| Fedora 37        | [`fedora37`][fedora37] | `>=2.9.22`       |
+| Release          | Docker image                         | Ansible          |
+| ---------------- | ------------------------------------ | ---------------- |
+| Debian 10        | [`debian-buster`][debian-buster]     | `<2.12,>=2.9.22` |
+| Debian 11        | [`debian-bullseye`][debian-bullseye] | `>=2.9.22`       |
+| Fedora 37        | [`fedora-37`][fedora-37]             | `>=2.9.22`       |
+| Ubuntu 18.04 LTS | [`ubuntu-bionic`][ubuntu-bionic]     | `<2.12,>=2.9.22` |
+| Ubuntu 20.04 LTS | [`ubuntu-focal`][ubuntu-focal]       | `>=2.9.22`       |
+| Ubuntu 22.04 LTS | [`ubuntu-jammy`][ubuntu-jammy]       | `>=2.9.22`       |
 
 If you want to add a new distribution or release version, please create a
 Docker image for it under the `tests/` directory and make sure the existing
@@ -31,12 +31,12 @@ tests work.
 I'm developing this role currently in a black box using the Docker images
 included in the repository and not running it on live environments.
 
-[bionic]: tests/bionic/Dockerfile
-[focal]: tests/focal/Dockerfile
-[jammy]: tests/jammy/Dockerfile
-[buster]: tests/buster/Dockerfile
-[bullseye]: tests/buster/Dockerfile
-[fedora37]: tests/fedora37/Dockerfile
+[ubuntu-bionic]: tests/ubuntu-bionic/Dockerfile
+[ubuntu-focal]: tests/ubuntu-focal/Dockerfile
+[ubuntu-jammy]: tests/ubuntu-jammy/Dockerfile
+[debian-buster]: tests/debian-buster/Dockerfile
+[debian-bullseye]: tests/debian-bullseye/Dockerfile
+[fedora-37]: tests/fedora-37/Dockerfile
 
 ## Configuration
 
