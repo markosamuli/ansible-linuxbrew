@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-PROJECT_ROOT=$(dirname $DIR)
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT=$(dirname "$DIR")
 
 set -e
 
@@ -13,9 +13,10 @@ extra_vars=$(printf ",%s" "${ansible_vars[@]}")
 extra_vars="{${extra_vars:1}}"
 
 # Paths in which Ansible will search for Roles
-export ANSIBLE_ROLES_PATH=$(dirname $PROJECT_ROOT)
+ANSIBLE_ROLES_PATH=$(dirname "$PROJECT_ROOT")
+export ANSIBLE_ROLES_PATH
 
-cd $PROJECT_ROOT
+cd "$PROJECT_ROOT"
 
 echo "*** Check syntax"
 
@@ -24,16 +25,32 @@ ansible-playbook tests/test.yml -i tests/inventory --syntax-check
 echo "*** Run Ansible playbook"
 
 ansible-playbook tests/test.yml -i tests/inventory --connection=local \
+    -v \
     -e "${extra_vars}"
+run_status=$?
+if [[ ${run_status} -eq 0 ]]; then
+    echo 'Run: pass'
+else
+    echo 'Run: fail'
+    exit 1
+fi
 
 echo "*** Idempotence test"
 
 ansible-playbook tests/test.yml -i tests/inventory --connection=local \
-    -e "${extra_vars}" \
-    | grep -q 'changed=0.*failed=0' \
-    && (echo 'Idempotence test: pass' && exit 0) \
-    || (echo 'Idempotence test: fail' && exit 1)
+    -e "${extra_vars}" |
+    grep -q 'changed=0.*failed=0'
+idempotence_status=$?
+if [[ $idempotence_status -eq 0 ]]; then
+    echo 'Idempotence test: pass'
+else
+    echo 'Idempotence test: fail'
+    exit 1
+fi
 
-echo "*** Verify installed Linuxbrew version"
+echo "*** Ansible playbooks completed on image ${TEST_IMAGE}"
 
-bash -c 'command -v brew && brew --version'
+echo "*** Verify installed Linuxbrew version in bash"
+bash -i -c 'command -v brew && brew --version'
+
+echo "*** Tests completed on image ${TEST_IMAGE}"

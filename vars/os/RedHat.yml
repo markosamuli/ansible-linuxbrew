@@ -1,0 +1,10 @@
+---
+# RedHat dependencies from:
+# https://github.com/markosamuli/ansible-linuxbrew/pull/9
+linuxbrew_install_dependencies:
+  - "@Development Tools"
+  - git
+  - curl
+  - procps-ng
+  - file
+  - libxcrypt-compat

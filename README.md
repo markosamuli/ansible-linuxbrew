@@ -14,6 +14,30 @@ using Travis CI on my OSS projects.
 
 I've tested the role up to Ansible 2.8 using local installation.
 
+## Compatibility
+
+Run tests with a supported Docker image, for example with `bionic`:
+
+```bash
+make bionic
+```
+
+| Release          | Docker image           | Ansible          |
+| ---------------- | ---------------------- | ---------------- |
+| Ubuntu 18.04 LTS | [`bionic`][bionic]     | `<2.12,>=2.9.22` |
+| Ubuntu 20.04 LTS | [`focal`][focal]       | `>=2.9.22`       |
+| Ubuntu 22.04 LTS | [`jammy`][jammy]       | `>=2.9.22`       |
+| Debian 10        | [`buster`][buster]     | `<2.12,>=2.9.22` |
+| Debian 11        | [`bullseye`][bullseye] | `>=2.9.22`       |
+| Fedora 37        | [`fedora37`][fedora37] | `>=2.9.22`       |
+
+[bionic]: tests/bionic/Dockerfile
+[focal]: tests/focal/Dockerfile
+[jammy]: tests/jammy/Dockerfile
+[buster]: tests/buster/Dockerfile
+[bullseye]: tests/buster/Dockerfile
+[fedora37]: tests/fedora37/Dockerfile
+
 ## Configuration
 
 By default, the role uses Ansible to clone the Homebrew Git repository and
@@ -26,10 +50,12 @@ you need to enable this in the Ansible configuration:
 linuxbrew_use_installer: true
 ```
 
+The installer seems to be faster than the default Ansible installation method.
+
 ## Role Variables
 
 Set `linuxbrew_init_shell` to `false` if you're for example managing your shell
-rc files using your own .dotfiles repository.
+init files using your own `.dotfiles` repository.
 
 ```yaml
 # Configure shell rc files

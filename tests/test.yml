@@ -1,6 +1,6 @@
 ---
-
 - hosts: localhost
   remote_user: root
+  name: Install Homebrew on Linux
   roles:
-    - ansible-linuxbrew
+    - markosamuli.linuxbrew

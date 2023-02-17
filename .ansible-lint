@@ -1,2 +1,4 @@
+---
 exclude_paths:
-- .travis.yml
+  - .travis.yml
+  - .ansible-lint

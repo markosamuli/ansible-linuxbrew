@@ -1,4 +1,4 @@
-FROM debian:buster
+FROM debian:bullseye
 
 RUN apt-get update && apt-get install -y \
   ca-certificates \
@@ -10,7 +10,6 @@ RUN sed -i "s~http://~https://~g" /etc/apt/sources.list
 RUN apt-get update && apt-get upgrade -y \
   && rm -rf /var/lib/apt/lists/*
 
-# Python 3.7.3
 RUN apt-get update && apt-get install -y \
   zsh \
   sudo \
@@ -18,10 +17,8 @@ RUN apt-get update && apt-get install -y \
   python3-pip \
   && rm -rf /var/lib/apt/lists/*
 
-# Ansible will require Python 3.8 or newer on the controller starting with
-# Ansible 2.12
 ARG ansible_version=">=2.9.22"
-ENV ANSIBLE_VERSION="<2.12,${ansible_version}"
+ENV ANSIBLE_VERSION="${ansible_version}"
 RUN pip3 install ansible${ANSIBLE_VERSION}
 
 ARG user=test

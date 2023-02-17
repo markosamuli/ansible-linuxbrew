@@ -1,0 +1,16 @@
+---
+- name: Install dependencies on Debian based systems
+  ansible.builtin.include_tasks: debian.yml
+  when: "ansible_os_family == 'Debian' or ansible_distribution == 'Pengwin'"
+
+- name: Install dependencies on RedHat based systems
+  ansible.builtin.include_tasks: redhat.yml
+  when: "ansible_os_family == 'RedHat'"
+
+- name: Install with Git
+  ansible.builtin.include_tasks: with_git.yml
+  when: not linuxbrew_use_installer
+
+- name: Install using the installer script
+  ansible.builtin.include_tasks: with_installer.yml
+  when: linuxbrew_use_installer

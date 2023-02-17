@@ -1,0 +1,78 @@
+---
+- name: Configure .zprofile
+  block:
+    - name: Set path to .zprofile
+      ansible.builtin.set_fact:
+        linuxbrew_zprofile_path: "{{ linuxbrew_home }}/.zprofile"
+      when: linuxbrew_zprofile_path is undefined
+
+    - name: Check whether .zprofile exists
+      ansible.builtin.stat:
+        path: "{{ linuxbrew_zprofile_path }}"
+      register: linuxbrew_zprofile_st
+
+    - name: Resolve .zprofile symlink
+      ansible.builtin.set_fact:
+        linuxbrew_zprofile_path: "{{ linuxbrew_zprofile_st.stat.lnk_source }}"
+      when:
+        - linuxbrew_zprofile_st.stat.exists
+        - linuxbrew_zprofile_st.stat.islnk
+
+    - name: Check whether pyenv is loaded in .zprofile
+      ansible.builtin.command: >-
+        grep -Fq 'brew shellenv' {{ linuxbrew_zprofile_path }}
+      register: check_zprofile
+      ignore_errors: true
+      changed_when: false
+      failed_when: false
+      when: linuxbrew_zprofile_st.stat.exists
+
+    - name: Configure .zprofile and create if missing
+      when: not linuxbrew_zprofile_st.stat.exists or check_zprofile.rc != 0
+      block:
+        - name: Load Homebrew in .zprofile
+          ansible.builtin.blockinfile:
+            dest: "{{ linuxbrew_zprofile_path }}"
+            create: true
+            mode: "0644"
+            marker: "# {mark} ANSIBLE MANAGED BLOCK: linuxbrew"
+            block: |
+              eval $({{ linuxbrew_prefix }}/bin/brew shellenv)
+
+- name: Configure .zshrc (if it exists)
+  block:
+    - name: Set path to .zshrc
+      ansible.builtin.set_fact:
+        linuxbrew_zshrc_path: "{{ linuxbrew_home }}/.zshrc"
+      when: linuxbrew_zshrc_path is undefined
+
+    - name: Check whether .zshrc exists
+      ansible.builtin.stat:
+        path: "{{ linuxbrew_zshrc_path }}"
+      register: linuxbrew_zshrc_st
+
+    - name: Resolve .zshrc symlink
+      ansible.builtin.set_fact:
+        linuxbrew_zshrc_path: "{{ linuxbrew_zshrc_st.stat.lnk_source }}"
+      when:
+        - linuxbrew_zshrc_st.stat.exists
+        - linuxbrew_zshrc_st.stat.islnk
+
+    - name: Check whether pyenv is loaded in .zshrc
+      ansible.builtin.command: >-
+        grep -Fq 'brew shellenv' {{ linuxbrew_zshrc_path }}
+      register: check_zshrc_linuxbrew
+      ignore_errors: true
+      changed_when: false
+      failed_when: false
+      when: linuxbrew_zshrc_st.stat.exists
+
+    - name: Load Homebrew in .zshrc
+      ansible.builtin.blockinfile:
+        dest: "{{ linuxbrew_zshrc_path }}"
+        marker: "# {mark} ANSIBLE MANAGED BLOCK: linuxbrew"
+        block: |
+          eval $({{ linuxbrew_prefix }}/bin/brew shellenv)
+      when:
+        - linuxbrew_zshrc_st.stat.exists
+        - check_zshrc_linuxbrew.rc != 0

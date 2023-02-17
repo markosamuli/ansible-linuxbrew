@@ -1,0 +1,139 @@
+---
+- name: Find .bash_profile and .profile files
+  block:
+    - name: Set path to .bash_profile
+      ansible.builtin.set_fact:
+        linuxbrew_bash_profile_path: "{{ linuxbrew_home }}/.bash_profile"
+      when: linuxbrew_bash_profile_path is undefined
+
+    - name: Check whether .bash_profile exists
+      ansible.builtin.stat:
+        path: "{{ linuxbrew_bash_profile_path }}"
+      register: linuxbrew_bash_profile_st
+
+    - name: Set path to .profile
+      ansible.builtin.set_fact:
+        linuxbrew_profile_path: "{{ linuxbrew_home }}/.profile"
+      when: linuxbrew_profile_path is undefined
+
+    - name: Check whether .profile exists
+      ansible.builtin.stat:
+        path: "{{ linuxbrew_profile_path }}"
+      register: linuxbrew_profile_st
+
+- name: Configure .bash_profile (if it exists)
+  when: linuxbrew_bash_profile_st.stat.exists
+  block:
+    - name: Resolve .bash_profile symlink
+      ansible.builtin.set_fact:
+        # yamllint disable-line rule:line-length
+        linuxbrew_bash_profile_path: "{{ linuxbrew_bash_profile_st.stat.lnk_source }}"
+      when:
+        - linuxbrew_bash_profile_st.stat.exists
+        - linuxbrew_bash_profile_st.stat.islnk
+
+    - name: Check whether Homebrew is loaded in .bash_profile
+      ansible.builtin.command: >-
+        grep -Fq 'brew shellenv' {{ linuxbrew_bash_profile_path }}
+      register: check_bash_profile
+      ignore_errors: true
+      changed_when: false
+      failed_when: false
+      when: linuxbrew_bash_profile_st.stat.exists
+
+    - name: Load Homebrew in .bash_profile
+      ansible.builtin.blockinfile:
+        dest: "{{ linuxbrew_bash_profile_path }}"
+        marker: "# {mark} ANSIBLE MANAGED BLOCK: linuxbrew"
+        block: |
+          eval $({{ linuxbrew_prefix }}/bin/brew shellenv)
+      when:
+        - linuxbrew_bash_profile_st.stat.exists
+        - check_bash_profile.rc != 0
+
+    - name: Create new .bash_profile
+      ansible.builtin.blockinfile:
+        dest: "{{ linuxbrew_bash_profile_path }}"
+        create: true
+        mode: "0644"
+        marker: "# {mark} ANSIBLE MANAGED BLOCK: linuxbrew"
+        block: |
+          eval $({{ linuxbrew_prefix }}/bin/brew shellenv)
+      when: not linuxbrew_bash_profile_st.stat.exists
+
+- name: Configure .profile (if it exists)
+  when: not linuxbrew_bash_profile_st.stat.exists
+  block:
+    - name: Resolve .profile symlink
+      ansible.builtin.set_fact:
+        linuxbrew_profile_path: "{{ linuxbrew_profile_st.stat.lnk_source }}"
+      when:
+        - linuxbrew_profile_st.stat.exists
+        - linuxbrew_profile_st.stat.islnk
+
+    - name: Check whether Homebrew is loaded in .profile
+      ansible.builtin.command: >-
+        grep -Fq 'brew shellenv' {{ linuxbrew_profile_path }}
+      register: check_profile
+      ignore_errors: true
+      changed_when: false
+      failed_when: false
+      when: linuxbrew_profile_st.stat.exists
+
+    - name: Load Homebrew in .profile
+      ansible.builtin.blockinfile:
+        dest: "{{ linuxbrew_profile_path }}"
+        marker: "# {mark} ANSIBLE MANAGED BLOCK: linuxbrew"
+        block: |
+          eval $({{ linuxbrew_prefix }}/bin/brew shellenv)
+      when:
+        - linuxbrew_profile_st.stat.exists
+        - check_profile.rc != 0
+
+    - name: Create new .profile
+      ansible.builtin.blockinfile:
+        dest: "{{ linuxbrew_profile_path }}"
+        create: true
+        mode: "0644"
+        marker: "# {mark} ANSIBLE MANAGED BLOCK: linuxbrew"
+        block: |
+          eval $({{ linuxbrew_prefix }}/bin/brew shellenv)
+      when: not linuxbrew_profile_st.stat.exists
+
+- name: Configure .bashrc (if it exists)
+  block:
+    - name: Set path to .bashrc
+      ansible.builtin.set_fact:
+        linuxbrew_bashrc_path: "{{ linuxbrew_home }}/.bashrc"
+      when: linuxbrew_bashrc_path is undefined
+
+    - name: Check whether .bashrc file exists
+      ansible.builtin.stat:
+        path: "{{ linuxbrew_bashrc_path }}"
+      register: linuxbrew_bashrc_st
+
+    - name: Resolve .bashrc symlink
+      ansible.builtin.set_fact:
+        linuxbrew_bashrc_path: "{{ linuxbrew_bashrc_st.stat.lnk_source }}"
+      when:
+        - linuxbrew_bashrc_st.stat.exists
+        - linuxbrew_bashrc_st.stat.islnk
+
+    - name: Check whether Homebrew is loaded in .bashrc
+      ansible.builtin.command: >-
+        grep -EFq 'brew shellenv' {{ linuxbrew_bashrc_path }}
+      register: check_bashrc_linuxbrew
+      ignore_errors: true
+      changed_when: false
+      failed_when: false
+      when: linuxbrew_bashrc_st.stat.exists
+
+    - name: Load Homebrew in .bashrc
+      ansible.builtin.blockinfile:
+        dest: "{{ linuxbrew_bashrc_path }}"
+        marker: "# {mark} ANSIBLE MANAGED BLOCK: linuxbrew"
+        block: |
+          eval $({{ linuxbrew_prefix }}/bin/brew shellenv)
+      when:
+        - linuxbrew_bashrc_st.stat.exists
+        - check_bashrc_linuxbrew.rc != 0

@@ -2,28 +2,28 @@
 # tasks file for markosamuli.linuxbrew
 
 - name: Load variables for the target system
-  include_vars: "{{ item }}"
+  ansible.builtin.include_vars: "{{ item }}"
   with_first_found:
     - "os/{{ ansible_distribution }}.yml"
     - "os/{{ ansible_os_family }}.yml"
 
 - name: Check if Linuxbrew is already installed in {{ linuxbrew_prefix_shared }}
-  stat:
+  ansible.builtin.stat:
     path: "{{ linuxbrew_prefix_shared }}/bin/brew"
   register: linuxbrew_shared_st
   become: true
 
 - name: Check if Linuxbrew is already installed in {{ linuxbrew_prefix_user }}
-  stat:
+  ansible.builtin.stat:
     path: "{{ linuxbrew_prefix_user }}/bin/brew"
   register: linuxbrew_user_st
   become: false
 
 - name: Install Linuxbrew
-  include_tasks: install.yml
+  ansible.builtin.include_tasks: install/install.yml
   when: not linuxbrew_shared_st.stat.exists
-        and not linuxbrew_user_st.stat.exists
+    and not linuxbrew_user_st.stat.exists
 
 - name: Configure Linuxbrew in shell
-  include_tasks: shell.yml
+  ansible.builtin.include_tasks: shell/shell.yml
   when: linuxbrew_init_shell|bool

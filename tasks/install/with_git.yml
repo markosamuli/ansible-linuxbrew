@@ -1,23 +1,28 @@
 ---
+- name: Get current user
+  ansible.builtin.command: whoami
+  register: linuxbrew_whoami
+  changed_when: false
+  become: false
 
 - name: Set Linuxbrew user
-  set_fact:
-    linuxbrew_user: "{{ ansible_user }}"
+  ansible.builtin.set_fact:
+    linuxbrew_user: "{{ linuxbrew_whoami.stdout }}"
   when: linuxbrew_user is undefined
 
 - name: Get group for user {{ linuxbrew_user }}
-  command: id -g
+  ansible.builtin.command: id -g
   register: linuxbrew_user_group
   become_user: "{{ linuxbrew_user }}"
   changed_when: false
 
 - name: Set Linuxbrew group
-  set_fact:
+  ansible.builtin.set_fact:
     linuxbrew_group: "{{ linuxbrew_user_group.stdout }}"
   when: linuxbrew_group is undefined
 
 - name: Create Linuxbrew directory
-  file:
+  ansible.builtin.file:
     path: "{{ linuxbrew_prefix_shared }}"
     state: directory
     owner: "{{ linuxbrew_user }}"
@@ -26,7 +31,7 @@
   become: true
 
 - name: Create Linuxbrew directories
-  file:
+  ansible.builtin.file:
     path: "{{ linuxbrew_prefix_shared }}/{{ item }}"
     state: directory
     owner: "{{ linuxbrew_user }}"
@@ -50,23 +55,23 @@
     - Frameworks
 
 - name: Set path to Homebrew repository
-  set_fact:
+  ansible.builtin.set_fact:
     linuxbrew_repository: "{{ linuxbrew_prefix_shared }}/Homebrew"
 
 - name: Clone Homebrew repository
-  git:
+  ansible.builtin.git:
     repo: "{{ linuxbrew_brew_repo }}"
     dest: "{{ linuxbrew_repository }}"
     version: "{{ linuxbrew_brew_version }}"
 
-- name: Clone Linuxbrew Core Tap repository
-  git:
+- name: Clone Homebrew Core Tap repository
+  ansible.builtin.git:
     repo: "{{ linuxbrew_core_tap_repo }}"
     dest: "{{ linuxbrew_repository }}/Library/Taps/homebrew/homebrew-core"
     version: "{{ linuxbrew_core_tap_version }}"
 
 - name: Update permissions
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     owner: "{{ linuxbrew_user }}"
     group: "{{ linuxbrew_group }}"
@@ -76,21 +81,23 @@
     - "{{ linuxbrew_repository }}/Library/Taps/homebrew/homebrew-core"
 
 - name: Create symlink to brew binary
-  file:
+  ansible.builtin.file:
     dest: "{{ linuxbrew_prefix_shared }}/bin/brew"
     src: "{{ linuxbrew_repository }}/bin/brew"
     state: "link"
   when: linuxbrew_prefix_shared != linuxbrew_repository
 
 - name: Path to portable-ruby vendor directory
-  set_fact:
+  ansible.builtin.set_fact:
+    # yamllint disable-line rule:line-length
     linuxbrew_ruby_current: "{{ linuxbrew_repository }}/vendor/portable-ruby/current"
 
 - name: Path to portable-ruby binary
-  set_fact:
+  ansible.builtin.set_fact:
     linuxbrew_ruby_path: "{{ linuxbrew_ruby_current }}/bin/ruby"
 
 - name: Update Homebrew to install portable Ruby
-  command: "{{ linuxbrew_prefix_shared }}/bin/brew update --force"
+  # yamllint disable-line rule:line-length
+  ansible.builtin.command: "{{ linuxbrew_prefix_shared }}/bin/brew update --force"
   args:
     creates: "{{ linuxbrew_ruby_path }}"

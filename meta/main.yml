@@ -1,23 +1,27 @@
 # -*- mode: yaml -*-
 # vim:ts=2:sw=2:ai:si:syntax=yaml
 ---
-
 galaxy_info:
   role_name: linuxbrew
+  namespace: markosamuli
   author: Marko Samuli Kirves
-  description: Install Linuxbrew
-  license: MIT
-  min_ansible_version: 2.6
+  description: Install Homebrew on Linux
+  license: BSD
+  min_ansible_version: 2.9.22
   github_branch: master
   platforms:
     - name: Ubuntu
       versions:
-        - xenial
         - bionic
+        - focal
+        - jammy
     - name: Debian
       versions:
         - buster
-        - stretch
+        - bullseye
+    - name: Fedora
+      versions:
+        - "37"
   galaxy_tags:
     - linuxbrew
     - homebrew
