@@ -1,5 +1,4 @@
 ---
 exclude_paths:
-  - .travis.yml
   - .ansible-lint
   - .github/
