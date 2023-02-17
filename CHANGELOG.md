@@ -1,6 +1,16 @@
 # Changelog
 
+## [2.0.1] - 2023-02-17
+
+Run GitHub Actions workflow when new release is published.
+
+[2.0.1]: https://github.com/markosamuli/ansible-linuxbrew/releases/tag/v2.0.1
+
 ## [2.0.0] - 2023-02-17
+
+Support for RedHat-based systems and latest Ansible versions.
+
+[2.0.0]: https://github.com/markosamuli/ansible-linuxbrew/releases/tag/v2.0.0
 
 ### Ansible compatibility
 
