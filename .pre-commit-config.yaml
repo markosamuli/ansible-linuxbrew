@@ -26,6 +26,7 @@ repos:
     hooks:
       - id: ansible-lint
         files: \.(yaml|yml)$
+        exclude: .github/workflows/pipeline.yml
 
   - repo: https://github.com/syntaqx/git-hooks
     rev: v0.0.17

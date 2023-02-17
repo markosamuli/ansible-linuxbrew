@@ -1,0 +1,120 @@
+---
+name: Test and release
+
+# This workflow is triggered on pushes to the repository.
+on:
+  pull_request:
+    branches:
+      - "**"
+  push:
+    branches:
+      - master
+    tags:
+      - v.*
+
+jobs:
+  lint:
+    name: Lint with pre-commit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: "18"
+
+      - uses: actions/setup-python@v3
+        with:
+          python-version: "3.11"
+
+      - uses: actions/setup-go@v3
+        with:
+          go-version: "1.19"
+
+      - name: Install dependencies
+        run: |
+          pip3 install pre-commit
+          go install mvdan.cc/sh/v3/cmd/shfmt
+          sudo apt-get install -y shellcheck
+          python --version
+          shfmt -version
+          shellcheck --version
+          pre-commit --version
+
+      - name: Cache pre-commit dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pre-commit/
+          # yamllint disable-line rule:line-length
+          key: ${{ runner.os }}-pre-commit-${{ hashFiles('**/.pre-commit-config.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pre-commit-
+
+      - name: Run pre-commit
+        run: pre-commit run -a
+
+  ubuntu:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        distrib: [ubuntu]
+        release: [focal, jammy, bionic]
+
+    name: Test - ${{ matrix.distrib }} ${{ matrix.release }}
+    env:
+      DISTRIB: ${{ matrix.distrib }}
+      RELEASE: ${{ matrix.release }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Run tests
+        run: ./tests/run-tests ${RELEASE}
+
+  debian:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        distrib: [debian]
+        release: [bullseye, buster]
+
+    name: Test - ${{ matrix.distrib }} ${{ matrix.release }}
+    env:
+      DISTRIB: ${{ matrix.distrib }}
+      RELEASE: ${{ matrix.release }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Run tests
+        run: ./tests/run-tests ${RELEASE}
+
+  fedora:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        distrib: [fedora]
+        release: [fedora37]
+
+    name: Test - ${{ matrix.distrib }} ${{ matrix.release }}
+    env:
+      DISTRIB: ${{ matrix.distrib }}
+      RELEASE: ${{ matrix.release }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Run tests
+        run: ./tests/run-tests ${RELEASE}
+
+  release:
+    name: Publish tagged releases to Ansible Galaxy
+    needs:
+      - lint
+      - ubuntu
+      - debian
+      - fedora
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - name: galaxy
+        uses: robertdebock/galaxy-action@1.2.0
+        with:
+          galaxy_api_key: ${{ secrets.galaxy_api_key }}

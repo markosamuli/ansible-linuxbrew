@@ -33,6 +33,10 @@
 [@aarey]: https://github.com/aairey
 [#9]: https://github.com/markosamuli/ansible-linuxbrew/pull/9
 
+### Testing
+
+- Run tests with supported Docker images on GitHub Actions
+
 ## [1.2.2] - 2020-09-06
 
 ### Fixed
