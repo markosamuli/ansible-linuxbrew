@@ -60,7 +60,7 @@ jobs:
         distrib: [ubuntu]
         release: [focal, jammy, bionic]
 
-    name: Test - ${{ matrix.distrib }} ${{ matrix.release }}
+    name: Test on ${{ matrix.distrib }}:${{ matrix.release }}
     env:
       DISTRIB: ${{ matrix.distrib }}
       RELEASE: ${{ matrix.release }}
@@ -77,7 +77,7 @@ jobs:
         distrib: [debian]
         release: [bullseye, buster]
 
-    name: Test - ${{ matrix.distrib }} ${{ matrix.release }}
+    name: Test on ${{ matrix.distrib }}:${{ matrix.release }}
     env:
       DISTRIB: ${{ matrix.distrib }}
       RELEASE: ${{ matrix.release }}
@@ -94,7 +94,7 @@ jobs:
         distrib: [fedora]
         release: [37]
 
-    name: Test - ${{ matrix.distrib }} ${{ matrix.release }}
+    name: Test on ${{ matrix.distrib }}:${{ matrix.release }}
     env:
       DISTRIB: ${{ matrix.distrib }}
       RELEASE: ${{ matrix.release }}
