@@ -112,7 +112,7 @@ run_tests_with_installer() {
     local image=$1
     local container_name=${REPO_NAME}-${image}-tests
     echo ""
-    image_msg "${image}" "Run tests installing with the Linuxbrew installer"
+    image_msg "${image}" "Run tests installing with the Homebrew installer"
     echo ""
     docker exec \
         "${docker_run_opts[@]}" \

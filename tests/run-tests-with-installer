@@ -59,7 +59,7 @@ fi
 
 echo "*** Ansible playbooks completed on image ${TEST_IMAGE}"
 
-echo "*** Verify installed Linuxbrew version in bash"
+echo "*** Verify installed Homebrew version in bash"
 bash -i -c 'command -v brew && brew --version'
 
 echo "*** Tests completed on image ${TEST_IMAGE}"

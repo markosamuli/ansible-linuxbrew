@@ -6,7 +6,7 @@
 [![GitHub release](https://img.shields.io/github/release/markosamuli/ansible-linuxbrew.svg)](https://github.com/markosamuli/ansible-linuxbrew/releases)
 [![License](https://img.shields.io/github/license/markosamuli/ansible-linuxbrew.svg)](https://github.com/markosamuli/ansible-linuxbrew/blob/master/LICENSE)
 
-Ansible role to install [Linuxbrew](http://linuxbrew.sh/) on Ubuntu.
+Ansible role to install [Homebrew](https://brew.sh/) on Linux.
 
 ## Compatibility
 
@@ -93,7 +93,7 @@ support for missing operating systems.
 The installation is based on the official [Homebrew installer][homebrew-installer]
 script.
 
-[homebrew-installer]: https://github.com/Linuxbrew/install
+[homebrew-installer]: https://github.com/Homebrew/install
 
 ## Author information
 
