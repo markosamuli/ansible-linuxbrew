@@ -5,20 +5,20 @@
 [![GitHub release](https://img.shields.io/github/release/markosamuli/ansible-linuxbrew.svg)](https://github.com/markosamuli/ansible-linuxbrew/releases)
 [![License](https://img.shields.io/github/license/markosamuli/ansible-linuxbrew.svg)](https://github.com/markosamuli/ansible-linuxbrew/blob/master/LICENSE)
 
-| Branch  | Status |
-|---------|--------|
-| master  | [![Build Status](https://travis-ci.org/markosamuli/ansible-linuxbrew.svg?branch=master)](https://travis-ci.org/markosamuli/ansible-linuxbrew)
-| develop | [![Build Status](https://travis-ci.org/markosamuli/ansible-linuxbrew.svg?branch=develop)](https://travis-ci.org/markosamuli/ansible-linuxbrew)
-
 Ansible role to install [Linuxbrew](http://linuxbrew.sh/) on Ubuntu.
+
+I'm not actively using or maintaining this role. The role used Travis CI for
+testing and publishing the releases, but since June 15th, 2021, the building
+on [travis-ci.org](https://www.travis-ci.org/) is ceased and I have stopped
+using Travis CI on my OSS projects.
 
 ## Configuration
 
 By default, the role uses Ansible to clone the Homebrew Git repository and
 create all relevant directories.
 
-To use the official [Homebrew installer] script instead, you need to enable this
-in the Ansible configuration:
+To use the official [Homebrew installer][homebrew-installer] script instead,
+you need to enable this in the Ansible configuration:
 
 ```yaml
 linuxbrew_use_installer: true
@@ -52,14 +52,15 @@ make test
 
 ## License
 
-* [BSD License](LICENSE)
+- [BSD License](LICENSE)
 
 ## Contributions
 
-The installation is based on the official [Homebrew installer] script.
+The installation is based on the official [Homebrew installer][homebrew-installer]
+script.
 
-[Homebrew installer]: https://github.com/Linuxbrew/install
+[homebrew-installer]: https://github.com/Linuxbrew/install
 
 ## Author Information
 
-* [@markosamuli](https://github.com/markosamuli)
+- [@markosamuli](https://github.com/markosamuli)
