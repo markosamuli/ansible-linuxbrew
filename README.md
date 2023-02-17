@@ -1,5 +1,6 @@
 # ansible-linuxbrew
 
+[![Test and release](https://github.com/markosamuli/ansible-linuxbrew/actions/workflows/pipeline.yml/badge.svg?branch=master)](https://github.com/markosamuli/ansible-linuxbrew/actions/workflows/pipeline.yml)
 [![Ansible Quality Score](https://img.shields.io/ansible/quality/42044.svg)](https://galaxy.ansible.com/markosamuli/linuxbrew)
 [![Ansible Role](https://img.shields.io/ansible/role/42044.svg)](https://galaxy.ansible.com/markosamuli/linuxbrew)
 [![GitHub release](https://img.shields.io/github/release/markosamuli/ansible-linuxbrew.svg)](https://github.com/markosamuli/ansible-linuxbrew/releases)
