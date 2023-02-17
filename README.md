@@ -7,13 +7,6 @@
 
 Ansible role to install [Linuxbrew](http://linuxbrew.sh/) on Ubuntu.
 
-I'm not actively using or maintaining this role. The role used Travis CI for
-testing and publishing the releases, but since June 15th, 2021, the building
-on [travis-ci.org](https://www.travis-ci.org/) is ceased and I have stopped
-using Travis CI on my OSS projects.
-
-I've tested the role up to Ansible 2.8 using local installation.
-
 ## Compatibility
 
 Run tests with a supported Docker image, for example with `bionic`:
@@ -30,6 +23,13 @@ make bionic
 | Debian 10        | [`buster`][buster]     | `<2.12,>=2.9.22` |
 | Debian 11        | [`bullseye`][bullseye] | `>=2.9.22`       |
 | Fedora 37        | [`fedora37`][fedora37] | `>=2.9.22`       |
+
+If you want to add a new distribution or release version, please create a
+Docker image for it under the `tests/` directory and make sure the existing
+tests work.
+
+I'm developing this role currently in a black box using the Docker images
+included in the repository and not running it on live environments.
 
 [bionic]: tests/bionic/Dockerfile
 [focal]: tests/focal/Dockerfile
@@ -82,6 +82,11 @@ make test
 
 - [BSD License](LICENSE)
 
+## Contributing
+
+I'm not actively using or maintaining this role, but welcome bug fixes and
+support for missing operating systems.
+
 ## Contributions
 
 The installation is based on the official [Homebrew installer][homebrew-installer]
@@ -89,6 +94,6 @@ script.
 
 [homebrew-installer]: https://github.com/Linuxbrew/install
 
-## Author Information
+## Author information
 
 - [@markosamuli](https://github.com/markosamuli)
