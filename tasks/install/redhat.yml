@@ -1,0 +1,7 @@
+---
+- name: Install dependencies with yum
+  ansible.builtin.yum:
+    name: "{{ linuxbrew_install_dependencies }}"
+    state: present
+  when: linuxbrew_install_dependencies is defined
+  become: true

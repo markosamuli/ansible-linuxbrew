@@ -1,15 +1,40 @@
 #!/usr/bin/env bash
 
-DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-PROJECT_ROOT=$(dirname $DIR)
+DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT=$(dirname "${DIR}")
 
-ROLE_NAME="$(basename $PROJECT_ROOT)"
+REPO_NAME="$(basename "${PROJECT_ROOT}")"
+ROLE_NAME="markosamuli.${REPO_NAME/ansible-/}"
 TEST_HOME=/home/test
 
-###
+docker_run_opts=()
+
+# Ansible version to install on the Docker images
+# Use PIP version specifiers:
+# https://peps.python.org/pep-0440/#version-specifiers
+ANSIBLE_VERSION=">=2.9.22"
+
+# Colour list copied from:
+# https://stackoverflow.com/questions/5947742/how-to-change-the-output-color-of-echo-in-linux
+
+# Reset
+Color_Off='\033[0m' # Text Reset
+
+# Bold
+BPurple='\033[1;35m' # Purple
+
+image_msg() {
+    local image=$1
+    shift
+    echo -e "${BPurple}[${image}] $*${Color_Off}"
+}
+
 # Detect Windows Subsystem for Linux
-###
-function detect_wsl {
+detect_wsl() {
+    if [ ! -e /proc/version ]; then
+        is_wsl=0
+        return
+    fi
     if grep -q Microsoft /proc/version; then
         echo "*** Windows Subsystem for Linux detected"
         is_wsl=1
@@ -18,91 +43,107 @@ function detect_wsl {
     fi
 }
 
-###
 # Stop all containers
-###
-function finish {
+finish() {
     local containers=""
-    containers=$(docker ps -q --filter=name=${ROLE_NAME})
-    if [ ! -z "${containers}" ]; then
-        echo "*** Stop all test containers"
+    containers=$(docker ps -q --filter=name="${REPO_NAME}")
+    if [ -n "${containers}" ]; then
+        echo "*** Stop and remove all test containers"
+        # shellcheck disable=SC2086
         docker stop ${containers}
     fi
 }
 
-###
 # Stop container
-###
-function stop {
+stop() {
     local image=$1
-    local container_name=${ROLE_NAME}-${image}-tests
-    echo "*** Stop containers"
-    docker stop ${container_name}
+    local container_name=${REPO_NAME}-${image}-tests
+    echo ""
+    image_msg "${image}" "Stop and remove containers"
+    echo ""
+    docker stop "${container_name}"
+    sleep 1
 }
 
-###
 # Build image
-###
-function build {
+build() {
     local image=$1
-    local image_name=${ROLE_NAME}-${image}
-    echo "*** Build image"
-    docker build -t ${image_name} ./tests/${image}
+    local image_name=${REPO_NAME}-${image}
+    echo ""
+    image_msg "${image}" "Build image from tests/${image}/Dockerfile"
+    echo ""
+    docker build \
+        --build-arg "ansible_version=${ANSIBLE_VERSION}" \
+        --build-arg "repository=${ROLE_NAME}" \
+        -t "${image_name}" \
+        "./tests/${image}"
 }
 
-###
 # Start container in the background
-###
-function start {
+start() {
     local image=$1
-    local image_name=${ROLE_NAME}-${image}
-    local container_name=${ROLE_NAME}-${image}-tests
-    echo "*** Start container"
-    docker run --rm -it -d \
-        -v ${MOUNT_ROOT}:${TEST_HOME}/${ROLE_NAME} \
-        --name ${container_name} \
-        $image_name
+    local image_name=${REPO_NAME}-${image}
+    local container_name=${REPO_NAME}-${image}-tests
+    echo ""
+    image_msg "${image}" "Start container ${container_name}"
+    echo ""
+    docker run --rm -d \
+        "${docker_run_opts[@]}" \
+        -v "${MOUNT_ROOT}:${TEST_HOME}/${ROLE_NAME}" \
+        -e "TEST_IMAGE=${image}" \
+        --name "${container_name}" \
+        "$image_name"
 }
 
-###
-# Run tests in the container
-###
-function run_tests_with_git {
+run_tests_with_git() {
     local image=$1
-    local container_name=${ROLE_NAME}-${image}-tests
-    echo "*** Run tests installing with Ansible from Git"
-    docker exec -it \
+    local container_name=${REPO_NAME}-${image}-tests
+    echo ""
+    image_msg "${image}" "Run tests installing with Ansible from Git"
+    echo ""
+    docker exec \
+        "${docker_run_opts[@]}" \
         --user test \
-        ${container_name} \
-        ${TEST_HOME}/${ROLE_NAME}/tests/run-tests-with-git
+        "${container_name}" \
+        "${TEST_HOME}/${ROLE_NAME}/tests/run-tests-with-git"
 }
 
-###
-# Run tests in the container
-###
-function run_tests_with_installer {
+run_tests_with_installer() {
     local image=$1
-    local container_name=${ROLE_NAME}-${image}-tests
-    echo "*** Run tests installing with the Linuxbrew installer"
-    docker exec -it \
+    local container_name=${REPO_NAME}-${image}-tests
+    echo ""
+    image_msg "${image}" "Run tests installing with the Linuxbrew installer"
+    echo ""
+    docker exec \
+        "${docker_run_opts[@]}" \
         --user test \
-        ${container_name} \
-        ${TEST_HOME}/${ROLE_NAME}/tests/run-tests-with-installer
+        "${container_name}" \
+        "${TEST_HOME}/${ROLE_NAME}/tests/run-tests-with-installer"
 }
 
 trap finish EXIT
 
-detect_wsl
-
-cd $DIR
-
-images=( "$@" )
-if [ ${#images[@]} -eq 0 ]; then
-    images=( */Dockerfile )
-    images=( "${images[@]/\/Dockerfile/}" )
+if [ -z "$CI" ]; then
+    docker_run_opts+=("-it")
 fi
 
-cd $PROJECT_ROOT
+detect_wsl
+
+cd "${DIR}" || {
+    echo "${DIR} not found"
+    exit 1
+}
+
+images=("$@")
+if [ ${#images[@]} -eq 0 ]; then
+    images=(*/Dockerfile)
+    images=("${images[@]/\/Dockerfile/}")
+fi
+
+cd "${PROJECT_ROOT}" || {
+    echo "${PROJECT_ROOT} not found"
+    exit 1
+}
 
 if [ "${is_wsl}" == "1" ]; then
     MOUNT_ROOT="$(pwd -P | sed 's~/mnt/c/~c:/~')"
@@ -113,17 +154,17 @@ fi
 set -e
 
 for i in "${images[@]}"; do
-    build $i
+    build "$i"
 done
 
 for i in "${images[@]}"; do
-    start $i
-    run_tests_with_git $i
-    stop $i
+    start "$i"
+    run_tests_with_git "$i"
+    stop "$i"
 done
 
 for i in "${images[@]}"; do
-    start $i
-    run_tests_with_installer $i
-    stop $i
+    start "$i"
+    run_tests_with_installer "$i"
+    stop "$i"
 done

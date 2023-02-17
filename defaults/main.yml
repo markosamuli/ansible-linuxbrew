@@ -1,5 +1,4 @@
 ---
-
 # Path to user home directory
 linuxbrew_home: "{{ ansible_env.HOME }}"
 

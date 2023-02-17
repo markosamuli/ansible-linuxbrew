@@ -1,27 +1,27 @@
 ---
-
 - name: Temporary directory
-  file:
+  ansible.builtin.file:
     path: "{{ linuxbrew_install_tmp }}"
     state: directory
+    mode: 0700
   become: false
 
-- name: Download Linuxbrew install script
-  get_url:
+- name: Download Homebrew install script
+  ansible.builtin.get_url:
     url: "{{ linuxbrew_install_url }}"
     dest: "{{ linuxbrew_install_tmp }}/install.sh"
-    checksum: "{{ linuxbrew_install_checksum }}"
-    mode: 0777
+    checksum: "{{ linuxbrew_install_checksum | default(omit) }}"
+    mode: 0700
   become: false
 
-- name: Install Linuxbrew
-  command: sh -c "{{ linuxbrew_install_tmp }}/install.sh"
+- name: Install Homebrew with the installer
+  ansible.builtin.command: sh -c "{{ linuxbrew_install_tmp }}/install.sh"
   register: install_result
   changed_when: "install_result.rc == 0"
   become: false
 
 - name: Remove temporary directory
-  file:
+  ansible.builtin.file:
     path: "{{ linuxbrew_install_tmp }}"
     state: absent
   become: false

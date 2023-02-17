@@ -1,7 +1,10 @@
 ---
-
 linuxbrew_install_dependencies:
   - git
   - curl
   - build-essential
   - locales
+
+  # ps is not installed on the buster Docker image
+  # https://github.com/Homebrew/brew/blob/master/Library/Homebrew/cmd/shellenv.sh
+  - procps
