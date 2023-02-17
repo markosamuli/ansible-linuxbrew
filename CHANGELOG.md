@@ -1,5 +1,11 @@
 # Changelog
 
+## [2.0.2] - 2023-02-17
+
+Fix Ansible Galaxy API key for automated role publishing.
+
+[2.0.2]: https://github.com/markosamuli/ansible-linuxbrew/releases/tag/v2.0.2
+
 ## [2.0.1] - 2023-02-17
 
 Run GitHub Actions workflow when new release is published.
