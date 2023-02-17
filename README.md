@@ -12,6 +12,8 @@ testing and publishing the releases, but since June 15th, 2021, the building
 on [travis-ci.org](https://www.travis-ci.org/) is ceased and I have stopped
 using Travis CI on my OSS projects.
 
+I've tested the role up to Ansible 2.8 using local installation.
+
 ## Configuration
 
 By default, the role uses Ansible to clone the Homebrew Git repository and
