@@ -3,6 +3,15 @@
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT=$(dirname "$DIR")
 
+if [ -d "${HOME}/.local/bin" ]; then
+    export PATH="${HOME}/.local/bin:${PATH}"
+fi
+
+command -v ansible-playbook >/dev/null || {
+    echo "ansible-playbook: command not found"
+    exit 127
+}
+
 set -e
 
 # Variables to pass to ansible-playbook

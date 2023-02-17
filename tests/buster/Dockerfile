@@ -18,14 +18,8 @@ RUN apt-get update && apt-get install -y \
   python3-pip \
   && rm -rf /var/lib/apt/lists/*
 
-# Ansible will require Python 3.8 or newer on the controller starting with
-# Ansible 2.12
-ARG ansible_version=">=2.9.22"
-ENV ANSIBLE_VERSION="<2.12,${ansible_version}"
-RUN pip3 install ansible${ANSIBLE_VERSION}
-
 ARG user=test
-ARG repository=ansible-linuxbrew
+ARG repository=markosamuli.linuxbrew
 
 # Create test user
 RUN useradd -m ${user} -s /bin/bash \
@@ -42,5 +36,13 @@ VOLUME ["/home/${user}/${repository}"]
 
 # Make sure we have the latest packages
 RUN apt-get update
+
+USER ${user}
+
+# Ansible will require Python 3.8 or newer on the controller starting with
+# Ansible 2.12
+ARG ansible_version=">=2.9.22"
+ENV ANSIBLE_VERSION="<2.12,${ansible_version}"
+RUN python3 -m pip install ansible${ANSIBLE_VERSION}
 
 CMD exec /bin/bash -c "trap : TERM INT; sleep infinity & wait"

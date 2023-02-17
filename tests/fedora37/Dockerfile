@@ -10,12 +10,8 @@ RUN dnf -y install \
   python3-pip \
   && dnf clean all
 
-ARG ansible_version=">=2.9.22"
-ENV ANSIBLE_VERSION="${ansible_version}"
-RUN pip install ansible${ANSIBLE_VERSION}
-
 ARG user=test
-ARG repository=ansible-linuxbrew
+ARG repository=markosamuli.linuxbrew
 
 # Create test user
 RUN useradd -m -s /bin/bash ${user} \
@@ -29,5 +25,11 @@ RUN touch /home/${user}/.zshrc \
 RUN mkdir -p /home/${user}/${repository} ; \
   chown -R ${user}:${user} /home/${user}/${repository}
 VOLUME ["/home/${user}/${repository}"]
+
+USER ${user}
+
+ARG ansible_version=">=2.9.22"
+ENV ANSIBLE_VERSION="${ansible_version}"
+RUN python3 -m pip install ansible${ANSIBLE_VERSION}
 
 CMD exec /bin/bash -c "trap : TERM INT; sleep infinity & wait"

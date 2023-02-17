@@ -18,12 +18,8 @@ RUN apt-get update && apt-get install -y \
   python3-pip \
   && rm -rf /var/lib/apt/lists/*
 
-ARG ansible_version=">=2.9.22"
-ENV ANSIBLE_VERSION="${ansible_version}"
-RUN pip install ansible${ANSIBLE_VERSION}
-
 ARG user=test
-ARG repository=ansible-linuxbrew
+ARG repository=markosamuli.linuxbrew
 
 # Create test user
 RUN useradd -m ${user} -s /bin/bash \
@@ -40,5 +36,11 @@ VOLUME ["/home/${user}/${repository}"]
 
 # Make sure we have the latest packages
 RUN apt-get update
+
+USER ${user}
+
+ARG ansible_version=">=2.9.22"
+ENV ANSIBLE_VERSION="${ansible_version}"
+RUN python3 -m pip install ansible${ANSIBLE_VERSION}
 
 CMD exec /bin/bash -c "trap : TERM INT; sleep infinity & wait"
