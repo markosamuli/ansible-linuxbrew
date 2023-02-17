@@ -7,6 +7,8 @@ REPO_NAME="$(basename "${PROJECT_ROOT}")"
 ROLE_NAME="markosamuli.${REPO_NAME/ansible-/}"
 TEST_HOME=/home/test
 
+docker_run_opts=()
+
 # Ansible version to install on the Docker images
 # Use PIP version specifiers:
 # https://peps.python.org/pep-0440/#version-specifiers
@@ -72,6 +74,7 @@ build() {
     echo ""
     docker build \
         --build-arg "ansible_version=${ANSIBLE_VERSION}" \
+        --build-arg "repository=${ROLE_NAME}" \
         -t "${image_name}" \
         "./tests/${image}"
 }
@@ -84,7 +87,8 @@ start() {
     echo ""
     image_msg "${image}" "Start container ${container_name}"
     echo ""
-    docker run --rm -it -d \
+    docker run --rm -d \
+        "${docker_run_opts[@]}" \
         -v "${MOUNT_ROOT}:${TEST_HOME}/${ROLE_NAME}" \
         -e "TEST_IMAGE=${image}" \
         --name "${container_name}" \
@@ -97,7 +101,8 @@ run_tests_with_git() {
     echo ""
     image_msg "${image}" "Run tests installing with Ansible from Git"
     echo ""
-    docker exec -it \
+    docker exec \
+        "${docker_run_opts[@]}" \
         --user test \
         "${container_name}" \
         "${TEST_HOME}/${ROLE_NAME}/tests/run-tests-with-git"
@@ -109,13 +114,18 @@ run_tests_with_installer() {
     echo ""
     image_msg "${image}" "Run tests installing with the Linuxbrew installer"
     echo ""
-    docker exec -it \
+    docker exec \
+        "${docker_run_opts[@]}" \
         --user test \
         "${container_name}" \
         "${TEST_HOME}/${ROLE_NAME}/tests/run-tests-with-installer"
 }
 
 trap finish EXIT
+
+if [ -z "$CI" ]; then
+    docker_run_opts+=("-it")
+fi
 
 detect_wsl
 
