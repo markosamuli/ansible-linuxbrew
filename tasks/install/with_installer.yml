@@ -15,7 +15,7 @@
   become: false
 
 - name: Install Homebrew with the installer
-  ansible.builtin.command: sh -c "{{ linuxbrew_install_tmp }}/install.sh"
+  ansible.builtin.command: sh -c "NONINTERACTIVE=1 {{ linuxbrew_install_tmp }}/install.sh"
   register: install_result
   changed_when: "install_result.rc == 0"
   become: false
